@@ -7,6 +7,7 @@ An interactive Dutch student loan (SF35 leenstelsel) calculator — open in any 
 ## What it does
 
 - **Bilingual NL / EN** — toggle in the header, preference saved in the browser
+- **Monetization-ready** — sponsor/ad placements, support link, feedback flow, privacy page, `ads.txt`, `robots.txt`, and sitemap
 - Calculates your monthly DUO payment (draagkracht vs wettelijk maandbedrag)
 - Shows 35-year debt trajectory under three scenarios
 - Models the ETF investment strategy (invest the freed-up amount instead of over-paying DUO)
@@ -29,6 +30,31 @@ An interactive Dutch student loan (SF35 leenstelsel) calculator — open in any 
 | Rate lock | 5 years from aanloopfase start, based on Oct–Sep 5yr bond avg |
 | Kwijtschelding | Automatic after 35 years (Art. 6.16 lid 1 WSF 2000) |
 | Aflosvrije periode | Max 60 months, extends end date 1:1 |
+
+## Monetization setup
+
+The site includes the AdSense verification script for `ca-pub-5255329257236286`. Manual display ad placements still require live ad unit slot IDs:
+
+1. Apply for Google AdSense, or sell direct sponsorships.
+2. In `index.html`, update the `MONETIZATION` constant:
+   - set `enabled: true`
+   - replace the `top` and `bottom` slot IDs with real AdSense ad unit IDs
+   - update `coffeeUrl` if your Buy Me a Coffee username differs
+3. Make sure `ads.txt` is published at the domain root with `pub-5255329257236286`.
+4. Keep `privacy.html` published and update it before enabling analytics, personalized ads, or any cookie-based tools.
+
+Until those IDs are real, the page shows non-tracking sponsor placeholders and the support link.
+
+## Revenue options
+
+- **Buy Me a Coffee:** easiest to launch, works immediately, but depends on goodwill.
+- **Direct sponsorships:** best early revenue if the site has a niche audience. Replace the fallback ad copy with a sponsor placement once sold.
+- **Google AdSense:** easiest automated ads after approval, but meaningful earnings usually require steady traffic.
+- **Affiliate links:** possible, but avoid anything that makes the calculator look like financial advice. Clearly disclose affiliate relationships.
+
+## Feedback collection
+
+The feedback card opens the Tally form at `https://tally.so/r/81M5oo`. The site passes `source`, `lang`, and `page` query parameters so the form can capture where feedback came from if matching hidden fields are added in Tally.
 
 ## Sources
 

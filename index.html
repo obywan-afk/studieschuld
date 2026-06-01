@@ -4,6 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DUO Studieschuld Calculator</title>
+<meta name="description" content="Bereken je DUO SF35 studieschuld, maandbedrag, kwijtschelding en investeringsscenario's met een interactieve Nederlandse calculator.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#eeecea">
+<link rel="canonical" href="https://obywan-afk.github.io/studieschuld/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DUO SF35 Studieschuld Calculator">
+<meta property="og:description" content="Bereken je maandelijkse DUO-verplichting, schuldontwikkeling en strategie voor SF35-leningen.">
+<meta property="og:url" content="https://obywan-afk.github.io/studieschuld/">
+<meta name="twitter:card" content="summary">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5255329257236286" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root {
@@ -56,6 +66,7 @@ body {
 .card:nth-child(2) { animation-delay: 70ms; }
 .card:nth-child(3) { animation-delay: 140ms; }
 .card:nth-child(4) { animation-delay: 210ms; }
+.card:nth-child(5) { animation-delay: 280ms; }
 
 @keyframes card-in {
   to { opacity: 1; transform: translateY(0); }
@@ -741,6 +752,233 @@ input[type="range"]::-moz-range-thumb {
   line-height: 1.5;
 }
 
+/* ══════════════
+   MONETIZATION
+══════════════ */
+.ad-card {
+  padding: 0.85rem;
+  background:
+    linear-gradient(135deg, rgba(35,80,212,0.05), transparent 34%),
+    var(--card);
+}
+
+.ad-unit {
+  min-height: 96px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--blue-bd);
+  border-radius: 8px;
+  background: var(--blue-bg);
+  color: var(--text-2);
+  text-align: center;
+  overflow: hidden;
+}
+
+.ad-unit.compact { min-height: 74px; }
+
+.ad-fallback {
+  padding: 0.85rem;
+  max-width: 720px;
+}
+
+.ad-eyebrow {
+  display: block;
+  margin-bottom: 0.18rem;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+.ad-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.ad-copy {
+  margin-top: 0.22rem;
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+.support-card {
+  display: grid;
+  gap: 0.85rem;
+  align-items: center;
+  border-color: var(--green-bd);
+  background:
+    linear-gradient(135deg, rgba(26,122,71,0.08), transparent 38%),
+    var(--card);
+}
+
+@media(min-width:680px){
+  .support-card {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+.support-kicker {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+
+.support-title {
+  margin-top: 0.16rem;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.support-copy {
+  margin-top: 0.28rem;
+  font-size: 0.76rem;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+
+.support-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.support-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 38px;
+  padding: 0.48rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--green-bd);
+  background: var(--green);
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), background 0.15s;
+}
+
+.support-btn:hover { background: #126538; }
+.support-btn:active { transform: scale(0.96); }
+
+.support-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  color: var(--text-2);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.support-link:hover { color: var(--blue); }
+
+.feedback-card {
+  display: grid;
+  gap: 0.85rem;
+  border-color: var(--blue-bd);
+  background:
+    linear-gradient(135deg, rgba(35,80,212,0.07), transparent 38%),
+    var(--card);
+}
+
+@media(min-width:760px){
+  .feedback-card {
+    grid-template-columns: 0.85fr 1.15fr;
+    align-items: start;
+  }
+}
+
+.feedback-form {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.feedback-form label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.feedback-form textarea,
+.feedback-form input {
+  width: 100%;
+  border: 1px solid var(--card-bd);
+  border-radius: 7px;
+  background: white;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.feedback-form textarea {
+  min-height: 98px;
+  resize: vertical;
+  padding: 0.65rem 0.7rem;
+}
+
+.feedback-form input {
+  min-height: 38px;
+  padding: 0.45rem 0.65rem;
+}
+
+.feedback-form textarea:focus,
+.feedback-form input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(35,80,212,0.12);
+}
+
+.feedback-meta {
+  display: grid;
+  gap: 0.55rem;
+}
+
+@media(min-width:560px){
+  .feedback-meta {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+  }
+}
+
+.feedback-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--blue);
+  border-radius: 8px;
+  background: var(--blue);
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), background 0.15s;
+}
+
+.feedback-submit:hover { background: #183fb4; }
+.feedback-submit:active { transform: scale(0.96); }
+
+.feedback-note {
+  font-size: 0.66rem;
+  color: var(--text-3);
+  line-height: 1.45;
+}
+
 /* Return sensitivity block */
 .sens-block {
   margin-top: 1rem;
@@ -887,14 +1125,14 @@ input[type="range"]::-moz-range-thumb {
 <div class="card">
   <div style="font-size:0.8rem;color:var(--text-2);line-height:1.65;">
     <p style="margin-bottom:0.6rem" data-i18n-html="introP1">Deze calculator helpt je begrijpen hoeveel je maandelijks aan DUO betaalt, hoe je schuld zich ontwikkelt over 35 jaar, en wat de strategie "minimaal betalen + investeren" concreet oplevert.</p>
-    <p style="margin-bottom:0.6rem" data-i18n-html="introP2"><strong>Vul in:</strong> je bruto jaarinkomen (slider) en je eigen schuldgegevens via <em>Pas schuld, rente, looptijd aan</em>. Alle waarden vind je in <a href="https://mijn.duo.nl" target="_blank" style="color:var(--blue)">Mijn DUO</a>.</p>
+    <p style="margin-bottom:0.6rem" data-i18n-html="introP2"><strong>Vul in:</strong> je bruto jaarinkomen (slider) en je eigen schuldgegevens via <em>Pas schuld, rente, looptijd aan</em>. Alle waarden vind je in <a href="https://mijn.duo.nl" target="_blank" rel="noopener" style="color:var(--blue)">Mijn DUO</a>.</p>
     <details style="margin-top:0.5rem">
       <summary style="cursor:pointer;font-weight:600;font-size:0.78rem;color:var(--text)" data-i18n="introQ1">Wat is het SF35 leenstelsel?</summary>
       <div style="margin-top:0.5rem;padding-left:0.75rem;border-left:2px solid var(--card-bd)">
         <p style="margin-bottom:0.4rem" data-i18n-html="introA1a">SF35 (ook wel "leenstelsel") is het studieleningstelsel voor studenten die <strong>na 1 september 2015</strong> zijn begonnen met studeren in het hoger onderwijs of mbo-4. Studieschuld wordt terugbetaald over maximaal 35 jaar, afhankelijk van je inkomen.</p>
         <p style="margin-bottom:0.4rem" data-i18n-html="introA1b"><strong>Kernregels:</strong> je betaalt 4% van het inkomen boven de drempel (€26.819 in 2026), maar nooit meer dan het wettelijk maandbedrag (de annuïteit). Als draagkracht ≤ €5/mnd, betaal je niets. Na 35 jaar wordt het resterende saldo automatisch kwijtgescholden.</p>
         <p style="margin-bottom:0.2rem" data-i18n-html="introA1c"><strong>Rente:</strong> vastgesteld voor 5 jaar, gebaseerd op het gemiddelde van de 5-jaars staatsobligaties (okt–sep). De rente voor de aflosperiode telt vanaf het begin van de <em>aanloopfase</em> (het jaar na het stoppen van de studiefinanciering).</p>
-        <p style="margin-top:0.35rem;font-size:0.72rem;color:var(--text-3)" data-i18n-html="introSrc">Bronnen: <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" style="color:var(--blue)">DUO Terugbetalen</a> · <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" style="color:var(--blue)">WSF 2000</a></p>
+        <p style="margin-top:0.35rem;font-size:0.72rem;color:var(--text-3)" data-i18n-html="introSrc">Bronnen: <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" rel="noopener" style="color:var(--blue)">DUO Terugbetalen</a> · <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" rel="noopener" style="color:var(--blue)">WSF 2000</a></p>
       </div>
     </details>
     <details style="margin-top:0.4rem">
@@ -911,11 +1149,22 @@ input[type="range"]::-moz-range-thumb {
           <tr><td style="padding:0.15rem 0.5rem 0.15rem 0">2026</td><td style="padding:0.15rem 0.5rem;font-weight:600">2,33%</td><td style="padding:0.15rem 0;color:var(--text-3)" data-i18n="rNoteCur">Huidig gepubliceerd tarief</td></tr>
         </table>
         <p style="margin-top:0.4rem;color:var(--text-3)" data-i18n="rExpl">Let op: de rente voor jouw lening is vergrendeld voor 5 jaar vanaf de start van jouw aanloopfase. Vul hieronder in wanneer jouw aanloopfase begon om de vergrendeling correct te berekenen.</p>
-        <p style="margin-top:0.3rem;color:var(--text-3)"><a href="https://www.duo.nl/particulier/rente/rente-voor-terugbetalers.jsp" target="_blank" style="color:var(--blue)" data-i18n="rExplLink">→ DUO renteoverzicht</a></p>
+        <p style="margin-top:0.3rem;color:var(--text-3)"><a href="https://www.duo.nl/particulier/rente/rente-voor-terugbetalers.jsp" target="_blank" rel="noopener" style="color:var(--blue)" data-i18n="rExplLink">→ DUO renteoverzicht</a></p>
       </div>
     </details>
   </div>
 </div>
+
+<!-- ══ SPONSOR / AD SLOT ══ -->
+<aside class="card ad-card" aria-label="Advertentie">
+  <div class="ad-unit compact" data-ad-slot="top">
+    <div class="ad-fallback">
+      <span class="ad-eyebrow" data-i18n="adEyebrow">Advertentie</span>
+      <div class="ad-title" data-i18n="adTopTitle">Bereik Nederlanders met studieschuld</div>
+      <p class="ad-copy" data-i18n="adTopCopy">Deze plek is gereserveerd voor relevante sponsors. Geen tracking-advertenties totdat de site een echte advertentiepartner en privacybeleid heeft.</p>
+    </div>
+  </div>
+</aside>
 
 <!-- ══ CARD 1: INCOME ══ -->
 <div class="card">
@@ -1220,6 +1469,43 @@ input[type="range"]::-moz-range-thumb {
   </div>
 </div>
 
+<!-- ══ SUPPORT CARD ══ -->
+<aside class="card support-card" aria-label="Steun dit project">
+  <div>
+    <div class="support-kicker" data-i18n="supportKicker">Onafhankelijk project</div>
+    <div class="support-title" data-i18n="supportTitle">Help deze calculator actueel houden</div>
+    <p class="support-copy" data-i18n="supportCopy">DUO-regels, rentepercentages en box-3-aannames veranderen. Een kleine bijdrage helpt met onderhoud, hosting en updates.</p>
+  </div>
+  <div class="support-actions">
+    <a class="support-btn" id="coffeeLink" href="https://buymeacoffee.com/larso" target="_blank" rel="noopener sponsored" data-i18n="supportButton">Buy me a coffee</a>
+    <a class="support-link" href="https://github.com/obywan-afk/studieschuld" target="_blank" rel="noopener" data-i18n="supportGithub">Bekijk de code</a>
+  </div>
+</aside>
+
+<!-- ══ FEEDBACK CARD ══ -->
+<section class="card feedback-card" aria-labelledby="feedbackTitle">
+  <div>
+    <div class="support-kicker" data-i18n="feedbackKicker">Feedback</div>
+    <div class="support-title" id="feedbackTitle" data-i18n="feedbackTitle">Help de calculator beter maken</div>
+    <p class="support-copy" data-i18n="feedbackCopy">Zie je een fout in een DUO-regel, mist er een scenario, of werkt iets onduidelijk? Stuur het door als verbeterpunt.</p>
+    <p class="feedback-note" data-i18n="feedbackPrivacy">Je invoer wordt niet automatisch opgeslagen. De knop opent een vooraf ingevulde GitHub issue die je zelf kunt controleren voor verzending.</p>
+  </div>
+  <div class="feedback-form" id="feedbackForm">
+    <a class="feedback-submit" id="feedbackLink" href="https://tally.so/r/81M5oo" target="_blank" rel="noopener" data-i18n="feedbackButton">Feedback sturen</a>
+    <p class="feedback-note" data-i18n="feedbackTallyNote">Opent het feedbackformulier in een nieuw tabblad. Je kunt daar ook screenshots toevoegen.</p>
+  </div>
+</section>
+
+<aside class="card ad-card" aria-label="Advertentie">
+  <div class="ad-unit" data-ad-slot="bottom">
+    <div class="ad-fallback">
+      <span class="ad-eyebrow" data-i18n="adEyebrow">Advertentie</span>
+      <div class="ad-title" data-i18n="adBottomTitle">Sponsor een nuttige financiële tool</div>
+      <p class="ad-copy" data-i18n="adBottomCopy">Voor productie: vul je Google AdSense publisher ID en slot IDs in, of vervang dit door directe sponsorplaatsingen.</p>
+    </div>
+  </div>
+</aside>
+
 </div><!-- /page -->
 
 <script>
@@ -1228,18 +1514,38 @@ input[type="range"]::-moz-range-thumb {
 // ─────────────────────────────────────────────────────
 let LANG = (localStorage.getItem('sf35lang') === 'en') ? 'en' : 'nl';
 
+// ── Monetization setup ───────────────────────────────
+// To enable real Google AdSense revenue:
+// 1) Set enabled: true.
+// 2) Replace adsenseClient with your publisher ID, e.g. ca-pub-1234567890123456.
+// 3) Replace the slot IDs with the ad unit IDs from your AdSense account.
+// Until then, the page shows direct-sponsor fallback placements and the support link.
+const MONETIZATION = {
+  enabled: false,
+  adsenseClient: 'ca-pub-5255329257236286',
+  slots: {
+    top: '0000000000',
+    bottom: '0000000000',
+  },
+  coffeeUrl: 'https://buymeacoffee.com/larso',
+};
+
+const FEEDBACK = {
+  formUrl: 'https://tally.so/r/81M5oo',
+};
+
 const I18N = {
   nl: {
     // ── header / intro
     appTitle: 'DUO SF35 Studieschuld Calculator',
     appSubtitle: 'Bereken je maandelijkse verplichting, schuldontwikkeling en strategie · voor iedereen met een SF35-lening (leenstelsel, na 2015)',
     introP1: 'Deze calculator helpt je begrijpen hoeveel je maandelijks aan DUO betaalt, hoe je schuld zich ontwikkelt over 35 jaar, en wat de strategie "minimaal betalen + investeren" concreet oplevert.',
-    introP2: '<strong>Vul in:</strong> je bruto jaarinkomen (slider) en je eigen schuldgegevens via <em>Pas schuld, rente, looptijd aan</em>. Alle waarden vind je in <a href="https://mijn.duo.nl" target="_blank" style="color:var(--blue)">Mijn DUO</a>.',
+    introP2: '<strong>Vul in:</strong> je bruto jaarinkomen (slider) en je eigen schuldgegevens via <em>Pas schuld, rente, looptijd aan</em>. Alle waarden vind je in <a href="https://mijn.duo.nl" target="_blank" rel="noopener" style="color:var(--blue)">Mijn DUO</a>.',
     introQ1: 'Wat is het SF35 leenstelsel?',
     introA1a: 'SF35 (ook wel "leenstelsel") is het studieleningstelsel voor studenten die <strong>na 1 september 2015</strong> zijn begonnen met studeren in het hoger onderwijs of mbo-4. Studieschuld wordt terugbetaald over maximaal 35 jaar, afhankelijk van je inkomen.',
     introA1b: '<strong>Kernregels:</strong> je betaalt 4% van het inkomen boven de drempel (€26.819 in 2026), maar nooit meer dan het wettelijk maandbedrag (de annuïteit). Als draagkracht ≤ €5/mnd, betaal je niets. Na 35 jaar wordt het resterende saldo automatisch kwijtgescholden.',
     introA1c: '<strong>Rente:</strong> vastgesteld voor 5 jaar, gebaseerd op het gemiddelde van de 5-jaars staatsobligaties (okt–sep). De rente voor de aflosperiode telt vanaf het begin van de <em>aanloopfase</em> (het jaar na het stoppen van de studiefinanciering).',
-    introSrc: 'Bronnen: <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" style="color:var(--blue)">DUO Terugbetalen</a> · <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" style="color:var(--blue)">WSF 2000</a>',
+    introSrc: 'Bronnen: <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" rel="noopener" style="color:var(--blue)">DUO Terugbetalen</a> · <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" rel="noopener" style="color:var(--blue)">WSF 2000</a>',
     introQ2: 'SF35 rentepercentages per jaar',
     rHdrYear: 'Jaar', rHdrSf35: 'SF35', rHdrNote: 'Toelichting',
     rNoteLow: 'Historisch laag', rNoteStart: '5-jaarsperiode start', rNoteCur: 'Huidig gepubliceerd tarief',
@@ -1302,7 +1608,25 @@ const I18N = {
     // ── footer
     footerHdr: 'Bronnen en disclaimer',
     footerDisclaimer: 'Deze calculator is uitsluitend bedoeld als rekenmodel voor inzicht en scenario-analyse. Het vormt geen juridisch of financieel advies. Controleer altijd via Mijn DUO voor je actuele schuld, rente en maandbedrag. De toekomstige rente na de huidige vergrendelingsperiode is onbekend; de calculator gebruikt 2,33% (gepubliceerd SF35 tarief 2026) als scenario-aanname.',
-    footerOpen: 'Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>',
+    footerOpen: 'Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" rel="noopener" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>',
+    adEyebrow: 'Advertentie',
+    adTopTitle: 'Bereik Nederlanders met studieschuld',
+    adTopCopy: 'Deze plek is gereserveerd voor relevante sponsors. Geen tracking-advertenties totdat de site een echte advertentiepartner en privacybeleid heeft.',
+    adBottomTitle: 'Sponsor een nuttige financiële tool',
+    adBottomCopy: 'Voor productie: vul je Google AdSense publisher ID en slot IDs in, of vervang dit door directe sponsorplaatsingen.',
+    supportKicker: 'Onafhankelijk project',
+    supportTitle: 'Help deze calculator actueel houden',
+    supportCopy: 'DUO-regels, rentepercentages en box-3-aannames veranderen. Een kleine bijdrage helpt met onderhoud, hosting en updates.',
+    supportButton: 'Buy me a coffee',
+    supportGithub: 'Bekijk de code',
+    feedbackKicker: 'Feedback',
+    feedbackTitle: 'Help de calculator beter maken',
+    feedbackCopy: 'Zie je een fout in een DUO-regel, mist er een scenario, of werkt iets onduidelijk? Stuur het door als verbeterpunt.',
+    feedbackPrivacy: 'De knop opent een kort Tally-formulier. Voeg daar feedback, context en eventueel screenshots toe.',
+    feedbackButton: 'Feedback sturen',
+    feedbackTallyNote: 'Opent het feedbackformulier in een nieuw tabblad. Je kunt daar ook screenshots toevoegen.',
+    footerMonetization: 'Deze site kan advertenties, sponsorvermeldingen en ondersteuningslinks tonen. Gebruik alleen financiële producten die je zelf begrijpt; advertenties zijn geen advies of aanbeveling.',
+    footerPrivacy: 'Privacy: de calculator draait lokaal in je browser. De site verstuurt je ingevulde bedragen niet naar een eigen server. Schakel je AdSense of analytics in, publiceer dan ook een volwaardig cookie- en privacybeleid.',
 
     // ── dynamic (functions)
     sliderTick: p => `drempel ${p.v}`,
@@ -1398,12 +1722,12 @@ const I18N = {
     appTitle: 'DUO SF35 Student Loan Calculator',
     appSubtitle: 'Calculate your monthly obligation, debt trajectory and strategy · for anyone with an SF35 loan (Dutch "leenstelsel", post-2015)',
     introP1: 'This calculator helps you understand how much you pay DUO each month, how your debt evolves over 35 years, and what the "pay the minimum + invest" strategy concretely yields.',
-    introP2: '<strong>Enter:</strong> your gross annual income (slider) and your own loan details via <em>Adjust debt, rate, term</em>. You can find all values in <a href="https://mijn.duo.nl" target="_blank" style="color:var(--blue)">Mijn DUO</a>.',
+    introP2: '<strong>Enter:</strong> your gross annual income (slider) and your own loan details via <em>Adjust debt, rate, term</em>. You can find all values in <a href="https://mijn.duo.nl" target="_blank" rel="noopener" style="color:var(--blue)">Mijn DUO</a>.',
     introQ1: 'What is the SF35 loan system?',
     introA1a: 'SF35 (the Dutch "leenstelsel") is the student loan system for students who started in higher education or MBO-4 <strong>after 1 September 2015</strong>. Student debt is repaid over a maximum of 35 years, depending on your income.',
     introA1b: '<strong>Core rules:</strong> you pay 4% of income above the threshold (€26,819 in 2026), but never more than the statutory monthly amount (the annuity). If your capacity-to-pay ≤ €5/mo, you pay nothing. After 35 years the remaining balance is automatically written off.',
     introA1c: '<strong>Interest:</strong> fixed for 5 years, based on the average of 5-year government bonds (Oct–Sep). The repayment-phase rate counts from the start of the <em>run-up phase</em> (the year after your student finance stopped).',
-    introSrc: 'Sources: <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" style="color:var(--blue)">DUO Repayment</a> · <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" style="color:var(--blue)">WSF 2000</a>',
+    introSrc: 'Sources: <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" rel="noopener" style="color:var(--blue)">DUO Repayment</a> · <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" rel="noopener" style="color:var(--blue)">WSF 2000</a>',
     introQ2: 'SF35 interest rates by year',
     rHdrYear: 'Year', rHdrSf35: 'SF35', rHdrNote: 'Note',
     rNoteLow: 'Historic low', rNoteStart: '5-year period starts', rNoteCur: 'Current published rate',
@@ -1466,7 +1790,25 @@ const I18N = {
     // ── footer
     footerHdr: 'Sources and disclaimer',
     footerDisclaimer: 'This calculator is intended solely as a model for insight and scenario analysis. It does not constitute legal or financial advice. Always check Mijn DUO for your actual debt, rate and monthly amount. The future rate after the current lock period is unknown; the calculator uses 2.33% (the published SF35 rate for 2026) as a scenario assumption.',
-    footerOpen: 'Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>',
+    footerOpen: 'Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" rel="noopener" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>',
+    adEyebrow: 'Advertisement',
+    adTopTitle: 'Reach Dutch student-loan borrowers',
+    adTopCopy: 'This space is reserved for relevant sponsors. No tracking ads are loaded until the site has a real ad partner and privacy policy.',
+    adBottomTitle: 'Sponsor a useful financial tool',
+    adBottomCopy: 'For production: add your Google AdSense publisher ID and slot IDs, or replace this with direct sponsorship placements.',
+    supportKicker: 'Independent project',
+    supportTitle: 'Help keep this calculator current',
+    supportCopy: 'DUO rules, interest rates and box-3 assumptions change. A small contribution helps with maintenance, hosting and updates.',
+    supportButton: 'Buy me a coffee',
+    supportGithub: 'View the code',
+    feedbackKicker: 'Feedback',
+    feedbackTitle: 'Help improve the calculator',
+    feedbackCopy: 'Found an incorrect DUO rule, missing scenario, or confusing interaction? Send it as an improvement note.',
+    feedbackPrivacy: 'The button opens a short Tally form. Add feedback, context and screenshots there.',
+    feedbackButton: 'Send feedback',
+    feedbackTallyNote: 'Opens the feedback form in a new tab. You can also add screenshots there.',
+    footerMonetization: 'This site may show ads, sponsor mentions and support links. Only use financial products you understand yourself; ads are not advice or recommendations.',
+    footerPrivacy: 'Privacy: the calculator runs locally in your browser. The site does not send entered amounts to its own server. If you enable AdSense or analytics, also publish a proper cookie and privacy policy.',
 
     // ── dynamic (functions)
     sliderTick: p => `threshold ${p.v}`,
@@ -1570,14 +1912,67 @@ function applyI18n() {
   document.documentElement.lang = LANG;
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
   const tg = document.getElementById('langToggle');
   if (tg) tg.textContent = (LANG === 'nl') ? 'EN' : 'NL';
+}
+
+function setupMonetization() {
+  const coffeeLink = document.getElementById('coffeeLink');
+  if (coffeeLink) coffeeLink.href = MONETIZATION.coffeeUrl;
+
+  const hasRealAds =
+    MONETIZATION.enabled &&
+    /^ca-pub-\d{16}$/.test(MONETIZATION.adsenseClient) &&
+    Object.values(MONETIZATION.slots).every(slot => /^\d+$/.test(slot) && !/^0+$/.test(slot));
+
+  if (!hasRealAds) return;
+
+  const adScriptSrc = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${MONETIZATION.adsenseClient}`;
+  if (!document.querySelector(`script[src="${adScriptSrc}"]`)) {
+    const adScript = document.createElement('script');
+    adScript.async = true;
+    adScript.crossOrigin = 'anonymous';
+    adScript.src = adScriptSrc;
+    document.head.appendChild(adScript);
+  }
+
+  document.querySelectorAll('[data-ad-slot]').forEach(unit => {
+    const key = unit.dataset.adSlot;
+    const slot = MONETIZATION.slots[key];
+    if (!slot) return;
+    unit.innerHTML = '';
+    const ad = document.createElement('ins');
+    ad.className = 'adsbygoogle';
+    ad.style.display = 'block';
+    ad.dataset.adClient = MONETIZATION.adsenseClient;
+    ad.dataset.adSlot = slot;
+    ad.dataset.adFormat = 'auto';
+    ad.dataset.fullWidthResponsive = 'true';
+    unit.appendChild(ad);
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (_) {
+      unit.innerHTML = `<div class="ad-fallback"><span class="ad-eyebrow">${t('adEyebrow')}</span><div class="ad-title">${t('adBottomTitle')}</div><p class="ad-copy">${t('adBottomCopy')}</p></div>`;
+    }
+  });
+}
+
+function setupFeedback() {
+  const link = document.getElementById('feedbackLink');
+  if (!link) return;
+  const url = new URL(FEEDBACK.formUrl);
+  url.searchParams.set('source', 'studieschuld-calculator');
+  url.searchParams.set('lang', LANG);
+  url.searchParams.set('page', location.href);
+  link.href = url.toString();
 }
 
 function setLang(l) {
   LANG = (l === 'en') ? 'en' : 'nl';
   localStorage.setItem('sf35lang', LANG);
   applyI18n();
+  setupFeedback();
   updateAll();
 }
 
@@ -2435,6 +2830,8 @@ document.getElementById('langToggle').addEventListener('click', () => {
 // ─────────────────────────────────────────────────────
 function init() {
   applyI18n();
+  setupMonetization();
+  setupFeedback();
   updateAll();
   // Set initial tab track position after layout
   requestAnimationFrame(() => refreshTabTrack());
@@ -2451,17 +2848,27 @@ window.addEventListener('resize', refreshTabTrack);
 <footer style="max-width:960px;margin:2rem auto 0;padding:1.25rem 0.85rem;border-top:1px solid #e2dfd8;font-size:0.68rem;color:#a39f99;line-height:1.6">
   <p><strong style="color:#706d67" data-i18n="footerHdr">Bronnen en disclaimer</strong></p>
   <p style="margin-top:0.3rem">
-    <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" style="color:#2350d4">DUO Terugbetalen</a> ·
-    <a href="https://www.duo.nl/particulier/rente/rente-voor-terugbetalers.jsp" target="_blank" style="color:#2350d4">DUO Renteoverzicht</a> ·
-    <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" style="color:#2350d4">WSF 2000 (wetten.overheid.nl)</a> ·
-    <a href="https://mijn.duo.nl" target="_blank" style="color:#2350d4">Mijn DUO</a>
+    <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" rel="noopener" style="color:#2350d4">DUO Terugbetalen</a> ·
+    <a href="https://www.duo.nl/particulier/rente/rente-voor-terugbetalers.jsp" target="_blank" rel="noopener" style="color:#2350d4">DUO Renteoverzicht</a> ·
+    <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" rel="noopener" style="color:#2350d4">WSF 2000 (wetten.overheid.nl)</a> ·
+    <a href="https://mijn.duo.nl" target="_blank" rel="noopener" style="color:#2350d4">Mijn DUO</a>
   </p>
   <p style="margin-top:0.4rem" data-i18n="footerDisclaimer">
     Deze calculator is uitsluitend bedoeld als rekenmodel voor inzicht en scenario-analyse. Het vormt geen juridisch of financieel advies. Controleer altijd via Mijn DUO voor je actuele schuld, rente en maandbedrag.
     De toekomstige rente na de huidige vergrendelingsperiode is onbekend; de calculator gebruikt 2,33% (gepubliceerd SF35 tarief 2026) als scenario-aanname.
   </p>
+  <p style="margin-top:0.4rem" data-i18n="footerMonetization">
+    Deze site kan advertenties, sponsorvermeldingen en ondersteuningslinks tonen. Gebruik alleen financiële producten die je zelf begrijpt; advertenties zijn geen advies of aanbeveling.
+  </p>
+  <p style="margin-top:0.4rem" data-i18n="footerPrivacy">
+    Privacy: de calculator draait lokaal in je browser. De site verstuurt je ingevulde bedragen niet naar een eigen server. Schakel je AdSense of analytics in, publiceer dan ook een volwaardig cookie- en privacybeleid.
+  </p>
   <p style="margin-top:0.4rem" data-i18n-html="footerOpen">
-    Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>
+    Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" rel="noopener" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>
+  </p>
+  <p style="margin-top:0.4rem">
+    <a href="./privacy.html" style="color:#2350d4">Privacybeleid / Privacy policy</a> ·
+    <a href="./ads.txt" style="color:#2350d4">ads.txt</a>
   </p>
 </footer>
 </body>
