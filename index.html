@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DUO Studieschuld Calculator</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --canvas:    #eeecea;
+  --card:      #ffffff;
+  --card-bd:   #e2dfd8;
+  --text:      #1a1917;
+  --text-2:    #706d67;
+  --text-3:    #a39f99;
+  --blue:      #2350d4;
+  --blue-bg:   #f0f3fe;
+  --blue-bd:   #c3cefc;
+  --green:     #1a7a47;
+  --green-bg:  #f0faf4;
+  --green-bd:  #7fcca8;
+  --amber:     #b85c0c;
+  --amber-bg:  #fff8f0;
+  --amber-bd:  #f5c480;
+  --red:       #c0270f;
+  --red-bg:    #fff2f0;
+  --mono:      'SF Mono', 'Fira Code', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: var(--canvas);
+  color: var(--text);
+  line-height: 1.5;
+  padding: 1.5rem 0.85rem 5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+.page { max-width: 960px; margin: 0 auto; }
+
+/* ── PAGE LOAD STAGGER ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-bd);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 0.85rem;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: card-in 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+.card:nth-child(1) { animation-delay: 0ms; }
+.card:nth-child(2) { animation-delay: 70ms; }
+.card:nth-child(3) { animation-delay: 140ms; }
+.card:nth-child(4) { animation-delay: 210ms; }
+
+@keyframes card-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media(min-width:600px){ .card { padding: 1.75rem; } }
+
+/* ── VAL FLASH ── */
+@keyframes val-flash {
+  0%   { color: inherit; }
+  20%  { color: var(--blue); }
+  100% { color: inherit; }
+}
+.flashed { animation: val-flash 0.45s ease-out; }
+
+/* ── HEADER ── */
+header {
+  margin-bottom: 1.25rem;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: card-in 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+  animation-delay: 0ms;
+}
+header h1 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+header p {
+  color: var(--text-3);
+  font-size: 0.75rem;
+  margin-top: 0.15rem;
+}
+@media(min-width:600px){
+  header h1 { font-size: 1.3rem; }
+}
+
+/* ── LABEL STYLE ── */
+.lbl {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-3);
+}
+
+/* ══════════════
+   CARD 1 — INCOME
+══════════════ */
+.income-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-bottom: 0.85rem;
+}
+
+.income-val {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--blue);
+  font-variant-numeric: tabular-nums;
+  font-family: var(--mono);
+  letter-spacing: -0.02em;
+}
+@media(min-width:600px){ .income-val { font-size: 2.4rem; } }
+
+/* Slider */
+.slider-wrap { position: relative; margin-bottom: 0.2rem; }
+
+input[type="range"] {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  background: var(--card-bd);
+  touch-action: manipulation;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px;
+  background: white;
+  border: 2px solid var(--blue);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+}
+input[type="range"]:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px; height: 20px;
+  background: white;
+  border: 2px solid var(--blue);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.slider-annotations {
+  position: relative;
+  height: 24px;
+  margin-top: 0.25rem;
+  margin-bottom: 0.65rem;
+}
+.slider-tick {
+  position: absolute;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+}
+.slider-tick-line { width: 1px; height: 5px; background: var(--amber); }
+.slider-tick-label { font-size: 0.6rem; font-weight: 600; color: var(--amber); white-space: nowrap; }
+
+/* Preset pills */
+.presets {
+  display: flex;
+  gap: 0.3rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.presets::-webkit-scrollbar { display: none; }
+@media(min-width:600px){ .presets { flex-wrap: wrap; overflow-x: visible; padding-bottom: 0; } }
+
+.pill {
+  flex-shrink: 0;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--card-bd);
+  background: white;
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, background 0.12s,
+              transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap;
+  user-select: none;
+}
+.pill:hover  { border-color: var(--blue); color: var(--blue); background: var(--blue-bg); }
+.pill.active { border-color: var(--blue); color: var(--blue); background: var(--blue-bg); font-weight: 700; }
+.pill:active { transform: scale(0.94); }
+
+/* Advanced toggle */
+.adv-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.85rem;
+  font-size: 0.76rem;
+  color: var(--text-3);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  user-select: none;
+  transition: color 0.15s;
+}
+.adv-toggle:hover { color: var(--blue); }
+.adv-arrow {
+  display: inline-block;
+  transition: transform 0.2s cubic-bezier(0.16,1,0.3,1);
+  font-size: 0.55rem;
+  color: var(--text-3);
+}
+.adv-arrow.open { transform: rotate(90deg); }
+
+.adv-grid {
+  display: none;
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--card-bd);
+  gap: 0.6rem;
+  grid-template-columns: 1fr 1fr;
+}
+.adv-grid.open { display: grid; }
+@media(min-width:600px){ .adv-grid.open { grid-template-columns: repeat(4, 1fr); } }
+
+.field label {
+  display: block;
+  font-size: 0.63rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-3);
+  margin-bottom: 0.3rem;
+}
+.field input[type="number"] {
+  width: 100%;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--card-bd);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--text);
+  background: white;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+.field input[type="number"]:focus { border-color: var(--blue); }
+
+/* ══════════════
+   CARD 2 — RESULT
+══════════════ */
+.result-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+@media(min-width:560px){
+  .result-layout {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+}
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 1.1rem 0.75rem;
+}
+
+.hero-lbl {
+  font-size: 0.63rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-3);
+  margin-bottom: 0.5rem;
+}
+
+.hero-num {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--mono);
+  color: var(--blue);
+  letter-spacing: -0.03em;
+  transition: color 0.25s;
+}
+.hero-num.green  { color: var(--green);  }
+.hero-num.blue   { color: var(--blue);   }
+.hero-num.amber  { color: var(--amber);  }
+
+@media(min-width:560px){ .hero-num { font-size: 4rem; } }
+
+.hero-tag {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-3);
+  letter-spacing: 0.01em;
+}
+
+/* Comparison */
+.comp { display: flex; flex-direction: column; gap: 0.4rem; }
+
+.comp-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  padding: 0.75rem 0.85rem;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--card-bd);
+  border-left-width: 2px;
+  gap: 0.5rem;
+  transition: background 0.2s, border-color 0.2s;
+}
+.comp-row.winner-dk  { background: var(--blue-bg);  border-left-color: var(--blue);  border-color: var(--blue-bd);  }
+.comp-row.winner-wm  { background: var(--amber-bg); border-left-color: var(--amber); border-color: var(--amber-bd); }
+.comp-row.loser      { border-left-color: var(--card-bd); }
+.comp-row.loser .comp-name,
+.comp-row.loser .comp-amt { color: var(--text-3); }
+
+.comp-left { display: flex; flex-direction: column; gap: 0.2rem; }
+
+.comp-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.comp-formula {
+  font-size: 0.66rem;
+  color: var(--text-3);
+  font-family: var(--mono);
+  margin-top: 0.05rem;
+}
+.comp-amt {
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--mono);
+  color: var(--text);
+  padding-top: 0.1rem;
+}
+.comp-row.winner-dk .comp-amt { color: var(--blue);  }
+.comp-row.winner-wm .comp-amt { color: var(--amber); }
+
+/* Strategy bar */
+.strat {
+  margin-top: 0.85rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  display: flex;
+  gap: 0.6rem;
+  color: var(--text-2);
+  transition: background 0.2s, border-color 0.2s;
+}
+.strat-icon { font-size: 0.95rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+/* Stats strip */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 0.85rem;
+  border: 1px solid var(--card-bd);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.stat-box {
+  padding: 0.75rem 0.65rem;
+  text-align: center;
+  border-right: 1px solid var(--card-bd);
+}
+.stat-box:last-child { border-right: none; }
+.stat-val {
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--mono);
+  color: var(--text);
+}
+.stat-lbl {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+  margin-top: 0.2rem;
+  line-height: 1.3;
+}
+.stat-sub {
+  font-size: 0.58rem;
+  color: var(--text-3);
+  margin-top: 0.05rem;
+  line-height: 1.3;
+}
+
+/* ── DRAAGKRACHT BREAKDOWN ── */
+.dk-explainer {
+  margin-top: 0.85rem;
+  border: 1px solid var(--card-bd);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dk-title {
+  font-size: 0.63rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-3);
+  padding: 0.6rem 0.9rem 0.5rem;
+  border-bottom: 1px solid var(--card-bd);
+}
+
+.dk-step {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.38rem 0.9rem;
+  gap: 0.75rem;
+  transition: opacity 0.2s;
+  border-bottom: 1px solid var(--card-bd);
+}
+.dk-step:last-of-type { border-bottom: none; }
+.dk-step.dimmed { opacity: 0.3; }
+
+.dk-hr { border: none; border-top: 1px solid var(--card-bd); }
+
+.dk-step-lbl {
+  color: var(--text-2);
+  font-size: 0.78rem;
+  font-family: var(--mono);
+  line-height: 1.4;
+}
+.dk-step-val {
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-family: var(--mono);
+  color: var(--text);
+  white-space: nowrap;
+  text-align: right;
+}
+.dk-step-val.subtract { color: var(--amber); }
+
+.dk-step.result .dk-step-lbl { font-weight: 600; color: var(--text); }
+.dk-step.final .dk-step-val  { font-weight: 800; color: var(--blue); }
+.dk-step.final-zero .dk-step-val { font-weight: 800; color: var(--green); }
+/* SF35 €5-floor row */
+.dk-step.floor-active { background: var(--amber-bg); border-radius: 6px; }
+.dk-step.floor-active .dk-step-lbl { color: var(--amber); font-weight: 600; }
+.dk-step.floor-active .dk-step-val { color: var(--amber); font-weight: 700; }
+.dk-step.floor-pass .dk-step-val   { color: var(--green); font-size: 0.78rem; }
+
+.dk-disclosure {
+  padding: 0.6rem 0.9rem;
+  border-top: 1px solid var(--card-bd);
+}
+.dk-disclosure summary {
+  font-size: 0.68rem;
+  color: var(--text-3);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.dk-disclosure summary::-webkit-details-marker { display: none; }
+.dk-disclosure summary::before {
+  content: '▶';
+  font-size: 0.5rem;
+  transition: transform 0.2s;
+  display: inline-block;
+  color: var(--text-3);
+}
+.dk-disclosure[open] summary::before { transform: rotate(90deg); }
+.dk-disclosure p {
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+/* ══════════════
+   CARD 3 — CHARTS
+══════════════ */
+
+/* Segmented control tabs */
+.tabs-wrap {
+  margin-bottom: 1.1rem;
+}
+.tabs {
+  display: inline-flex;
+  background: var(--canvas);
+  border: 1px solid var(--card-bd);
+  border-radius: 8px;
+  padding: 3px;
+  position: relative;
+  gap: 0;
+  overflow-x: auto;
+  max-width: 100%;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tabs-track {
+  position: absolute;
+  top: 3px; bottom: 3px; left: 3px;
+  border-radius: 5px;
+  background: white;
+  border: 1px solid var(--card-bd);
+  transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), width 0.22s cubic-bezier(0.16,1,0.3,1);
+  pointer-events: none;
+}
+
+.tab-btn {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  padding: 0.35rem 0.8rem;
+  border: none;
+  background: none;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-3);
+  cursor: pointer;
+  border-radius: 5px;
+  transition: color 0.15s, transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap;
+  user-select: none;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--text); font-weight: 600; }
+.tab-btn:active { transform: scale(0.94); }
+
+/* Tab pane entrance */
+.tab-pane { display: none; }
+.tab-pane.active {
+  display: block;
+  animation: pane-in 0.22s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes pane-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.chart-desc {
+  font-size: 0.76rem;
+  color: var(--text-2);
+  margin-bottom: 0.85rem;
+  line-height: 1.6;
+}
+
+.chart-wrap { height: 260px; position: relative; }
+@media(min-width:600px){ .chart-wrap { height: 300px; } }
+
+/* Insight */
+.insight {
+  background: var(--blue-bg);
+  border: 1px solid var(--blue-bd);
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.76rem;
+  color: var(--text-2);
+  margin-top: 0.85rem;
+  line-height: 1.55;
+}
+.insight strong { color: var(--blue); }
+.insight.amber  { background: var(--amber-bg); border-color: var(--amber-bd); }
+.insight.amber strong { color: var(--amber); }
+
+/* Debt summary */
+.debt-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 0.85rem;
+  border: 1px solid var(--card-bd);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.debt-sum {
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  border-right: 1px solid var(--card-bd);
+}
+.debt-sum:last-child { border-right: none; }
+.debt-sum .val {
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--mono);
+}
+@media(min-width:600px){ .debt-sum .val { font-size: 1.1rem; } }
+.debt-sum .lbl {
+  font-size: 0.58rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+  margin-top: 0.2rem;
+  line-height: 1.3;
+}
+.debt-sum .sub {
+  font-size: 0.56rem;
+  color: var(--text-3);
+  margin-top: 0.1rem;
+  line-height: 1.3;
+}
+.debt-sum.red   .val { color: var(--red);   }
+.debt-sum.blue  .val { color: var(--blue);  }
+.debt-sum.green .val { color: var(--green); }
+
+.note {
+  font-size: 0.67rem;
+  color: var(--text-3);
+  margin-top: 0.6rem;
+  line-height: 1.5;
+}
+
+/* Strategy analysis */
+.strat-analysis {
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--card-bd);
+}
+.sa-title {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-3);
+  margin-bottom: 0.65rem;
+}
+/* Income zones */
+.sa-zones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+  margin-bottom: 0.85rem;
+}
+.sa-zone {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.71rem;
+  padding: 0.28rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  color: var(--text-2);
+}
+.sa-zone.zone-active {
+  border-color: var(--blue-bd);
+  background: var(--blue-bg);
+}
+.sa-zone.zone-active.zone-warn {
+  border-color: var(--amber-bd);
+  background: var(--amber-bg);
+}
+.sa-zone-dot  { font-size: 0.55rem; flex-shrink: 0; }
+.sa-zone-lbl  { flex: 1; font-weight: 500; }
+.sa-zone-rng  { font-family: var(--mono); font-size: 0.65rem; color: var(--text-3); white-space: nowrap; }
+.sa-zone-you  {
+  font-size: 0.6rem; font-weight: 700;
+  background: var(--blue); color: #fff;
+  padding: 0.1rem 0.35rem; border-radius: 3px; white-space: nowrap;
+}
+.sa-zone.zone-active.zone-warn .sa-zone-you { background: var(--amber); }
+/* Comparison table */
+.sa-cmp {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.74rem;
+  margin-top: 0.1rem;
+}
+.sa-cmp th {
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  padding: 0.25rem 0.4rem;
+  border-bottom: 1px solid var(--card-bd);
+  text-align: right;
+}
+.sa-cmp th:first-child { text-align: left; }
+.sa-cmp td {
+  padding: 0.3rem 0.4rem;
+  border-bottom: 1px solid var(--card-bd);
+  color: var(--text-2);
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 0.73rem;
+}
+.sa-cmp td:first-child { font-family: var(--base); text-align: left; font-size: 0.74rem; }
+.sa-cmp tr:last-child td { border-bottom: none; font-weight: 700; background: var(--bg); }
+.sa-cmp td.pos { color: var(--green); }
+.sa-cmp td.neg { color: var(--red); }
+.sa-cmp td.dim { color: var(--text-3); }
+.sa-risk {
+  margin-top: 0.6rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid var(--card-bd);
+  font-size: 0.7rem;
+  color: var(--text-2);
+  line-height: 1.55;
+  background: var(--bg);
+}
+.sa-risk strong { color: var(--text); }
+
+/* Scenario table */
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.sc-tbl { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 500px; }
+.sc-tbl th {
+  text-align: left;
+  font-size: 0.63rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid var(--card-bd);
+  white-space: nowrap;
+}
+.sc-tbl td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--card-bd);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-2);
+}
+.sc-tbl tr:last-of-type td { border-bottom: none; }
+.sc-tbl tr.hl { background: var(--green-bg); }
+.sc-tbl .blue  { color: var(--blue);  font-weight: 600; }
+.sc-tbl .green { color: var(--green); font-weight: 600; }
+.sc-tbl .red   { color: var(--red);   font-weight: 600; }
+.sc-tbl .mono  { font-family: var(--mono); font-size: 0.76rem; }
+
+.sc-footnote { font-size: 0.67rem; color: var(--text-3); margin-top: 0.75rem; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <h1>DUO SF35 Studieschuld Calculator</h1>
+  <p>Bereken je maandelijkse verplichting, schuldontwikkeling en strategie · voor iedereen met een SF35-lening (leenstelsel, na 2015)</p>
+</header>
+
+<!-- ══ CARD 0: INTRO ══ -->
+<div class="card">
+  <div style="font-size:0.8rem;color:var(--text-2);line-height:1.65;">
+    <p style="margin-bottom:0.6rem">Deze calculator helpt je begrijpen hoeveel je maandelijks aan DUO betaalt, hoe je schuld zich ontwikkelt over 35 jaar, en wat de strategie "minimaal betalen + investeren" concreet oplevert.</p>
+    <p style="margin-bottom:0.6rem"><strong>Vul in:</strong> je bruto jaarinkomen (slider) en je eigen schuldgegevens via <em>Pas schuld, rente, looptijd aan</em>. Alle waarden vind je in <a href="https://mijn.duo.nl" target="_blank" style="color:var(--blue)">Mijn DUO</a>.</p>
+    <details style="margin-top:0.5rem">
+      <summary style="cursor:pointer;font-weight:600;font-size:0.78rem;color:var(--text)">Wat is het SF35 leenstelsel?</summary>
+      <div style="margin-top:0.5rem;padding-left:0.75rem;border-left:2px solid var(--card-bd)">
+        <p style="margin-bottom:0.4rem">SF35 (ook wel "leenstelsel") is het studieloanstelsel voor studenten die <strong>na 1 september 2015</strong> zijn begonnen met studeren in het hoger onderwijs of mbo-4. Studieschuld wordt terugbetaald over maximaal 35 jaar, afhankelijk van je inkomen.</p>
+        <p style="margin-bottom:0.4rem"><strong>Kernregels:</strong> je betaalt 4% van het inkomen boven de drempel (€26.819 in 2026), maar nooit meer dan het wettelijk maandbedrag (de annuïteit). Als draagkracht ≤ €5/mnd, betaal je niets. Na 35 jaar wordt het resterende saldo automatisch kwijtgescholden.</p>
+        <p style="margin-bottom:0.2rem"><strong>Rente:</strong> vastgesteld voor 5 jaar, gebaseerd op het gemiddelde van de 5-jaars staatsobligaties (okt–sep). De rente voor de aflosperiode telt vanaf het begin van de <em>aanloopfase</em> (het jaar na het stoppen van de studiefinanciering).</p>
+        <p style="margin-top:0.35rem;font-size:0.72rem;color:var(--text-3)">Bronnen: <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" style="color:var(--blue)">DUO Terugbetalen</a> · <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" style="color:var(--blue)">WSF 2000</a></p>
+      </div>
+    </details>
+    <details style="margin-top:0.4rem">
+      <summary style="cursor:pointer;font-weight:600;font-size:0.78rem;color:var(--text)">SF35 rentepercentages per jaar</summary>
+      <div style="margin-top:0.5rem;padding-left:0.75rem;border-left:2px solid var(--card-bd);font-size:0.73rem">
+        <table style="border-collapse:collapse;width:100%">
+          <tr style="color:var(--text-3);font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em">
+            <td style="padding:0.2rem 0.5rem 0.2rem 0">Jaar</td><td style="padding:0.2rem 0.5rem">SF35</td><td style="padding:0.2rem 0">Toelichting</td>
+          </tr>
+          <tr><td style="padding:0.15rem 0.5rem 0.15rem 0">2017–2022</td><td style="padding:0.15rem 0.5rem;color:var(--green);font-weight:600">0,00%</td><td style="padding:0.15rem 0;color:var(--text-3)">Historisch laag</td></tr>
+          <tr><td style="padding:0.15rem 0.5rem 0.15rem 0">2023</td><td style="padding:0.15rem 0.5rem;font-weight:600">0,46%</td><td style="padding:0.15rem 0;color:var(--text-3)">5-jaarsperiode start</td></tr>
+          <tr><td style="padding:0.15rem 0.5rem 0.15rem 0">2024</td><td style="padding:0.15rem 0.5rem;font-weight:600">2,56%</td><td></td></tr>
+          <tr><td style="padding:0.15rem 0.5rem 0.15rem 0">2025</td><td style="padding:0.15rem 0.5rem;font-weight:600">2,57%</td><td></td></tr>
+          <tr><td style="padding:0.15rem 0.5rem 0.15rem 0">2026</td><td style="padding:0.15rem 0.5rem;font-weight:600">2,33%</td><td style="padding:0.15rem 0;color:var(--text-3)">Huidig gepubliceerd tarief</td></tr>
+        </table>
+        <p style="margin-top:0.4rem;color:var(--text-3)">Let op: de rente voor jouw lening is vergrendeld voor 5 jaar vanaf de start van jouw aanloopfase. Vul hieronder in wanneer jouw aanloopfase begon om de vergrendeling correct te berekenen.</p>
+        <p style="margin-top:0.3rem;color:var(--text-3)"><a href="https://www.duo.nl/particulier/rente/rente-voor-terugbetalers.jsp" target="_blank" style="color:var(--blue)">→ DUO renteoverzicht</a></p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- ══ CARD 1: INCOME ══ -->
+<div class="card">
+  <div class="income-header">
+    <span class="lbl">Bruto jaarinkomen</span>
+    <span class="income-val" id="inkVal">€35.000</span>
+  </div>
+
+  <div class="slider-wrap">
+    <input type="range" id="inkomen" min="0" max="250000" step="1000" value="35000">
+  </div>
+  <div class="slider-annotations" id="sliderAnnotations"></div>
+
+  <div class="presets" id="presets">
+    <button class="pill" data-val="0">€0</button>
+    <button class="pill" data-val="20000">€20k</button>
+    <button class="pill active" data-val="35000">€35k</button>
+    <button class="pill" data-val="50000">€50k</button>
+    <button class="pill" data-val="65000">€65k</button>
+    <button class="pill" data-val="80000">€80k</button>
+    <button class="pill" data-val="100000">€100k</button>
+    <button class="pill" data-val="150000">€150k</button>
+  </div>
+
+  <button class="adv-toggle" id="advToggle">
+    <span class="adv-arrow" id="advArrow">▶</span>
+    Jouw schuldgegevens invullen (schuld, rente, looptijd)
+  </button>
+  <div class="adv-grid" id="advGrid">
+    <div class="field">
+      <label>Schuld (€) <span style="font-weight:400;color:var(--text-3)">→ Mijn DUO</span></label>
+      <input type="number" id="schuld" value="40000" step="500" min="1000" max="300000">
+    </div>
+    <div class="field">
+      <label>Vergrendelde rente (%/jr)</label>
+      <input type="number" id="rente" value="2.33" step="0.05" min="0" max="15">
+    </div>
+    <div class="field">
+      <label>Resterende jaren</label>
+      <input type="number" id="jaren" value="35" step="1" min="1" max="35">
+    </div>
+    <div class="field">
+      <label>Drempel (€) <span style="font-weight:400;color:var(--text-3)">2026: €26.819</span></label>
+      <input type="number" id="drempel" value="26819.42" step="100" min="10000" max="80000">
+    </div>
+    <div class="field" style="grid-column:1/-1">
+      <label>Aanloopfase gestart (jaar) <span style="font-weight:400;color:var(--text-3)">→ voor rentelock-berekening</span></label>
+      <select id="aanloopJaar" style="width:100%;padding:0.4rem 0.5rem;border:1px solid var(--card-bd);border-radius:6px;background:var(--card);font-size:0.82rem;color:var(--text)">
+        <option value="2018">2018 (lock t/m dec 2022, vervallen)</option>
+        <option value="2019">2019 (lock t/m dec 2023)</option>
+        <option value="2020">2020 (lock t/m dec 2024)</option>
+        <option value="2021">2021 (lock t/m dec 2025)</option>
+        <option value="2022">2022 (lock t/m dec 2026)</option>
+        <option value="2023" selected>2023 (lock t/m dec 2027 → nieuw jan 2028)</option>
+        <option value="2024">2024 (lock t/m dec 2028)</option>
+        <option value="2025">2025 (lock t/m dec 2029)</option>
+        <option value="2026">2026 (lock t/m dec 2030)</option>
+      </select>
+      <p style="margin-top:0.3rem;font-size:0.67rem;color:var(--text-3)">De aanloopfase begint op 1 januari van het jaar nadat je studiefinanciering stopte. De rente is vergrendeld voor 5 jaar vanaf dat moment.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CARD 2: RESULT ══ -->
+<div class="card">
+  <div class="result-layout">
+    <!-- Hero -->
+    <div class="hero" id="hero">
+      <div class="hero-lbl">Te betalen / maand</div>
+      <div class="hero-num" id="heroNum">—</div>
+      <div class="hero-tag" id="heroTag">—</div>
+    </div>
+
+    <!-- Comparison -->
+    <div class="comp">
+      <div class="comp-row" id="rowDk">
+        <div class="comp-left">
+          <div class="comp-name">
+            Draagkracht
+            <span id="badgeDk" style="display:none"></span>
+          </div>
+          <div class="comp-formula" id="fmtDk">—</div>
+        </div>
+        <div class="comp-amt" id="amtDk">—</div>
+      </div>
+      <div class="comp-row" id="rowWm">
+        <div class="comp-left">
+          <div class="comp-name">
+            Wettelijk maandbedrag
+            <span id="badgeWm" style="display:none"></span>
+          </div>
+          <div class="comp-formula" id="fmtWm">—</div>
+        </div>
+        <div class="comp-amt" id="amtWm">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Draagkracht live breakdown -->
+  <div class="dk-explainer" id="dkExplainer">
+    <div class="dk-title">Draagkracht — live berekening</div>
+
+    <div class="dk-step">
+      <span class="dk-step-lbl">Bruto jaarinkomen</span>
+      <span class="dk-step-val" id="dkbInk">—</span>
+    </div>
+    <div class="dk-step">
+      <span class="dk-step-lbl">− Drempel</span>
+      <span class="dk-step-val subtract" id="dkbDrempel">—</span>
+    </div>
+    <div class="dk-step result" id="dkbOverRow">
+      <span class="dk-step-lbl" id="dkbOverLbl">= Inkomen boven drempel</span>
+      <span class="dk-step-val" id="dkbOver">—</span>
+    </div>
+    <div class="dk-step" id="dkbRateRow">
+      <span class="dk-step-lbl">× 4% / jaar</span>
+      <span class="dk-step-val" id="dkbYear">—</span>
+    </div>
+    <div class="dk-step" id="dkbDivRow">
+      <span class="dk-step-lbl">÷ 12</span>
+      <span class="dk-step-val" id="dkbDiv">—</span>
+    </div>
+    <div class="dk-step final" id="dkbFinalRow">
+      <span class="dk-step-lbl">= Draagkracht / maand</span>
+      <span class="dk-step-val" id="dkbFinal">—</span>
+    </div>
+    <div class="dk-step dimmed" id="dkb5Row">
+      <span class="dk-step-lbl" id="dkb5Lbl">SF35 €5-drempelregel</span>
+      <span class="dk-step-val" id="dkb5Val">—</span>
+    </div>
+
+    <details class="dk-disclosure">
+      <summary>Wat is de drempel?</summary>
+      <p>De drempel (2026: €26.819,42) is het inkomen dat je altijd voor jezelf houdt — de overheid stelt dit jaarlijks vast op het sociaal minimum. DUO kijkt naar je inkomen van 2 jaar geleden.</p>
+    </details>
+  </div>
+
+  <!-- Strategy bar -->
+  <div class="strat" id="strat">
+    <span class="strat-icon" id="stratIcon">💡</span>
+    <span id="stratText"></span>
+  </div>
+
+  <!-- Stats strip -->
+  <div class="stats">
+    <div class="stat-box">
+      <div class="stat-val" id="statRente">—</div>
+      <div class="stat-lbl">Rente / maand</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" id="statGroei">—</div>
+      <div class="stat-lbl">Schuldgroei / mnd</div>
+      <div class="stat-sub" id="statGroeiSub"></div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" id="statEtf">—</div>
+      <div class="stat-lbl">ETF-ruimte / mnd</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" id="statEind">—</div>
+      <div class="stat-lbl" id="statEindLbl">Schuld na 35 jr</div>
+      <div class="stat-sub" id="statEindSub"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CARD 3: CHARTS ══ -->
+<div class="card">
+  <div class="tabs-wrap">
+    <div class="tabs" id="tabsContainer">
+      <div class="tabs-track" id="tabsTrack"></div>
+      <button class="tab-btn active" data-tab="curve">Betalingscurve</button>
+      <button class="tab-btn" data-tab="debt">Schuld t/m 2060</button>
+      <button class="tab-btn" data-tab="scenario">Scenario 2055</button>
+    </div>
+  </div>
+
+  <!-- Tab 1: Payment curve -->
+  <div class="tab-pane active" id="pane-curve">
+    <p class="chart-desc">
+      Maandbedrag per inkomensniveau. Zwart = wat je betaalt (laagste van twee). Blauw gestippeld = draagkracht. Amber gestippeld = wettelijk. Verticale lijn = jouw inkomen.
+    </p>
+    <div class="chart-wrap"><canvas id="chartCurve"></canvas></div>
+    <div class="insight" id="curveInsight"></div>
+  </div>
+
+  <!-- Tab 2: Debt trajectory -->
+  <div class="tab-pane" id="pane-debt">
+    <p class="chart-desc">
+      Schuldontwikkeling over 35 jaar. Blauw = minimale betalingen (kwijtschelding 2060). Paars = inkomen ×1,75. Groen = altijd wettelijk betalen. Amber = ETF-scenariolijn (aanname: je belegt het vrijgekomen bedrag @ 7%/jr bruto).
+    </p>
+    <div class="chart-wrap"><canvas id="chartDebt"></canvas></div>
+    <div class="insight amber" id="debtInsight"></div>
+    <div class="debt-summary">
+      <div class="debt-sum red">
+        <div class="val" id="sumKwit">—</div>
+        <div class="lbl">Kwijtgescholden 2060</div>
+        <div class="sub">Automatisch afgeschreven</div>
+      </div>
+      <div class="debt-sum blue">
+        <div class="val" id="sumPaid">—</div>
+        <div class="lbl">Totaal betaald</div>
+        <div class="sub">In 35 jaar aan DUO</div>
+      </div>
+      <div class="debt-sum green">
+        <div class="val" id="sumEtf">—</div>
+        <div class="lbl">ETF-portfolio 2060</div>
+        <div class="sub">Vrijgekomen bedrag @ 7%/jr</div>
+      </div>
+    </div>
+    <div class="note" id="etfNote">
+      ETF-portfolio = maandelijks het vrijgekomen bedrag (wettelijk − draagkracht) @ 7%/jaar compound.
+    </div>
+    <div class="strat-analysis" id="stratAnalysis"></div>
+  </div>
+
+  <!-- Tab 3: Scenario 2055 -->
+  <div class="tab-pane" id="pane-scenario">
+    <p class="chart-desc">
+      Betalingen in de laatste 5 jaar vóór kwijtschelding (2055–2060) bij verschillende inkomens, geschat op basis van de gesimuleerde schuldstand. Groen = dichtst bij huidig inkomen.
+    </p>
+    <div class="table-scroll">
+      <table class="sc-tbl" id="scTable"></table>
+    </div>
+    <div class="sc-footnote" id="scNote"></div>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+// ─────────────────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────────────────
+const fmt   = n => '€' + Math.round(Math.abs(n)).toLocaleString('nl-NL');
+const pctOf = (v, max) => Math.min(100, Math.max(0, v / max * 100));
+
+function draagkracht(ink, drempel) {
+  return Math.max(0, (ink - drempel) * 0.04 / 12);
+}
+function annuiteit(schuld, rente, jaren) {
+  const r = rente / 100 / 12;
+  const n = jaren * 12;
+  if (n <= 0) return schuld;
+  if (r < 1e-9) return schuld / n;
+  return schuld * r * Math.pow(1+r, n) / (Math.pow(1+r, n) - 1);
+}
+
+// POST_LOCK_RATE: DUO resets the rate every 5 years based on the Oct–Sep Dutch 5yr bond avg.
+// 2.33% is the *current* (2026) published SF35 rate — it is NOT the known future rate after Jan 2028.
+// It's used here as a scenario assumption only. The actual 2028+ rate depends on future bond markets.
+const POST_LOCK_RATE = 2.33; // scenario assumption — label as such in the UI
+
+// SF35 minimum payment rule: Art. 6.10 lid 3 WSF 2000 (via Besluit SF 2000 Art. 4.9).
+// DUO only charges you if draagkracht EXCEEDS €5/month. At or below €5 → effectively €0.
+const DK_FLOOR = 5;
+
+function getLockEnd() {
+  // Lock end = January 1 of (aanloopfase start year + 5)
+  const yr = parseInt(document.getElementById('aanloopJaar')?.value || '2023', 10);
+  return new Date(yr + 5, 0, 1);
+}
+
+function simulate(ink, schuld0, startRente, totalJaren, drempel) {
+  let s = schuld0, totalPaid = 0, etfValue = 0;
+  const pts    = [s];
+  const etfPts = [0];
+  // Rate lock: 5 years from the aanloopfase start year (configurable).
+  // After the lock, rate resets; we use POST_LOCK_RATE as a scenario assumption.
+  const now = new Date();
+  const lockEnd = getLockEnd();
+  const LOCK_REMAINING_MONTHS = Math.max(0,
+    (lockEnd.getFullYear() - now.getFullYear()) * 12 +
+    (lockEnd.getMonth() - now.getMonth())
+  );
+  const lockedMonths = Math.min(LOCK_REMAINING_MONTHS, totalJaren * 12);
+
+  for (let m = 0; m < totalJaren * 12; m++) {
+    const r = m < lockedMonths ? startRente : POST_LOCK_RATE;
+    const remJaar = (totalJaren * 12 - m) / 12;
+    if (remJaar < 0.001) break;
+    const wm      = annuiteit(s, r, remJaar);
+    const dk_raw  = draagkracht(ink, drempel);
+    const dk      = dk_raw > DK_FLOOR ? dk_raw : 0; // SF35 €5-drempelregel
+    const pay     = Math.min(dk, wm);
+    const interest= s * r / 100 / 12;
+    s = s + interest - pay;
+    totalPaid  += pay;
+    etfValue    = etfValue * (1 + 0.07/12) + Math.max(0, wm - pay);
+    if ((m + 1) % 12 === 0) {
+      pts.push(Math.max(0, s));
+      etfPts.push(Math.round(etfValue));
+    }
+  }
+  return { pts, etfPts, finalDebt: Math.max(0, s), totalPaid, etfValue };
+}
+
+// ─────────────────────────────────────────────────────
+//  CHART REGISTRY + DIRTY FLAGS
+// ─────────────────────────────────────────────────────
+const charts = {};
+const dirty  = { curve: true, debt: true, scenario: true };
+function destroy(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+// ─────────────────────────────────────────────────────
+//  READ INPUTS  (clamped — prevents nonsensical values)
+// ─────────────────────────────────────────────────────
+function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v || 0)); }
+function inp() {
+  return {
+    ink:          clamp(+document.getElementById('inkomen').value,   0,     250000),
+    schuld:       clamp(+document.getElementById('schuld').value,    1000,  300000),
+    rente:        clamp(+document.getElementById('rente').value,     0,     15),
+    jaren:        clamp(+document.getElementById('jaren').value,     1,     35),
+    drempel:      clamp(+document.getElementById('drempel').value,   10000, 80000),
+    aanloopJaar:  parseInt(document.getElementById('aanloopJaar')?.value || '2023', 10),
+  };
+}
+
+// ─────────────────────────────────────────────────────
+//  SLIDER VISUALS
+// ─────────────────────────────────────────────────────
+function refreshSlider(ink, drempel) {
+  const slider = document.getElementById('inkomen');
+  const max = +slider.max;
+  const p  = pctOf(ink, max);
+  slider.style.background =
+    `linear-gradient(to right, var(--blue) ${p}%, var(--card-bd) ${p}%)`;
+
+  const tp = pctOf(drempel, max);
+  document.getElementById('sliderAnnotations').innerHTML =
+    `<div class="slider-tick" style="left:${tp}%">
+       <div class="slider-tick-line"></div>
+       <div class="slider-tick-label">drempel ${fmt(drempel)}</div>
+     </div>`;
+}
+
+// ─────────────────────────────────────────────────────
+//  PRESET PILLS
+// ─────────────────────────────────────────────────────
+function refreshPresets(ink) {
+  document.querySelectorAll('.pill').forEach(b => b.classList.toggle('active', +b.dataset.val === ink));
+}
+
+// ─────────────────────────────────────────────────────
+//  SEGMENTED CONTROL TRACK
+// ─────────────────────────────────────────────────────
+function refreshTabTrack() {
+  const activeBtn = document.querySelector('.tab-btn.active');
+  const track = document.getElementById('tabsTrack');
+  if (!activeBtn || !track) return;
+  track.style.width  = activeBtn.offsetWidth + 'px';
+  track.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
+}
+
+// ─────────────────────────────────────────────────────
+//  TICKER + FLASH ANIMATIONS
+// ─────────────────────────────────────────────────────
+let isDragging = false;
+document.getElementById('inkomen').addEventListener('mousedown', () => isDragging = true);
+document.getElementById('inkomen').addEventListener('touchstart', () => isDragging = true);
+document.addEventListener('mouseup', () => isDragging = false);
+document.addEventListener('touchend', () => isDragging = false);
+
+function ticker(el, to) {
+  const from = parseFloat(el.dataset.raw ?? el.textContent.replace(/[^\d.]/g, '')) || 0;
+  if (isDragging || Math.abs(from - to) < 0.5) { el.textContent = fmt(to); el.dataset.raw = to; return; }
+  el.dataset.raw = to;
+  const start = performance.now(), dur = 320;
+  function frame(now) {
+    const t = Math.min((now - start) / dur, 1);
+    const ease = 1 - Math.pow(1 - t, 4);
+    el.textContent = fmt(from + (to - from) * ease);
+    if (t < 1) requestAnimationFrame(frame);
+    else el.textContent = fmt(to);
+  }
+  requestAnimationFrame(frame);
+}
+
+function flash(el) {
+  el.classList.remove('flashed');
+  void el.offsetWidth;
+  el.classList.add('flashed');
+}
+
+// ─────────────────────────────────────────────────────
+//  UPDATE CALCULATOR CARD
+// ─────────────────────────────────────────────────────
+function updateCalc() {
+  const { ink, schuld, rente, jaren, drempel } = inp();
+
+  document.getElementById('inkVal').textContent = '€' + ink.toLocaleString('nl-NL');
+  refreshSlider(ink, drempel);
+  refreshPresets(ink);
+
+  const dk_raw  = draagkracht(ink, drempel);
+  const dk      = dk_raw > DK_FLOOR ? dk_raw : 0; // SF35 €5-drempelregel
+  const wm      = annuiteit(schuld, rente, jaren);
+  const pay     = Math.min(dk, wm);
+  const interest= schuld * rente / 100 / 12;
+  const netto   = pay - interest;
+  const etfRoom = Math.max(0, wm - dk);
+  const dkWins  = dk <= wm;
+  const zeroPay = dk === 0; // covers: below drempel OR draagkracht ≤ €5 (SF35 rule)
+
+  // ── Hero
+  const num  = document.getElementById('heroNum');
+  const tag  = document.getElementById('heroTag');
+
+  ticker(heroNum, pay);
+  flash(heroNum);
+
+  if (zeroPay) {
+    num.className  = 'hero-num green';
+    tag.textContent  = 'geen betalingsverplichting';
+  } else if (dkWins) {
+    num.className  = 'hero-num blue';
+    tag.textContent  = 'draagkrachtbedrag';
+  } else {
+    num.className  = 'hero-num amber';
+    tag.textContent  = 'wettelijk maandbedrag';
+  }
+
+  // ── Comparison rows
+  document.getElementById('rowDk').className = 'comp-row ' + (dkWins  ? 'winner-dk' : 'loser');
+  document.getElementById('rowWm').className = 'comp-row ' + (!dkWins ? 'winner-wm' : 'loser');
+  document.getElementById('badgeDk').style.display = 'none';
+  document.getElementById('badgeWm').style.display = 'none';
+
+  const over = ink - drempel;
+  document.getElementById('fmtDk').textContent = over <= 0
+    ? `inkomen ≤ drempel → €0`
+    : dk_raw <= DK_FLOOR
+    ? `4% formule → ${fmt(dk_raw)} ≤ €5 → €0`
+    : `4% × (${fmt(ink)} − ${fmt(drempel)}) ÷ 12`;
+  document.getElementById('fmtWm').textContent =
+    `annuïteit ${fmt(schuld)} @ ${rente}% / ${jaren} jr`;
+  ticker(document.getElementById('amtDk'), dk);
+  ticker(document.getElementById('amtWm'), wm);
+
+  // ── Strategy bar
+  const strat = document.getElementById('strat');
+  const icon  = document.getElementById('stratIcon');
+  const text  = document.getElementById('stratText');
+  if (zeroPay && ink <= drempel) {
+    strat.style.cssText = `background:var(--green-bg);border-color:var(--green-bd)`;
+    icon.textContent = '🟢';
+    text.innerHTML = `<strong>Geen verplichting.</strong> Jouw inkomen ligt onder de drempel van ${fmt(drempel)}, dus draagkracht = €0. Je hoeft DUO dit jaar niets te betalen. Overweeg pauze-maanden te sparen voor jaren met hóger inkomen.`;
+  } else if (zeroPay) {
+    // Above drempel but dk_raw ≤ €5 — SF35 §4.9 Besluit SF floor rule
+    strat.style.cssText = `background:var(--green-bg);border-color:var(--green-bd)`;
+    icon.textContent = '🟢';
+    text.innerHTML = `<strong>Geen verplichting (SF35 €5-drempelregel).</strong> Je draagkracht is ${fmt(dk_raw)}/mnd — positief, maar DUO vereist alleen betaling als draagkracht <em>meer</em> dan €5/mnd bedraagt (Art. 6.10 lid 3 WSF 2000). Effectief betaal je €0. Spaar pauze-maanden voor jaren met hóger inkomen.`;
+  } else if (dkWins) {
+    strat.style.cssText = `background:var(--blue-bg);border-color:var(--blue-bd)`;
+    icon.textContent = '💡';
+    text.innerHTML = `<strong>Minimale verplichting: ${fmt(dk)}/mnd.</strong> Het verschil — ${fmt(etfRoom)}/mnd — blijft vrij voor ETF-investering. Belegd @ 7%/jaar compound groeit dat over 34 jaar naar een substantieel vermogen. In 2060 wordt de resterende schuld automatisch kwijtgescholden.`;
+  } else {
+    strat.style.cssText = `background:var(--amber-bg);border-color:var(--amber-bd)`;
+    icon.textContent = '📊';
+    text.innerHTML = `<strong>Wettelijk maandbedrag geldt: ${fmt(wm)}/mnd.</strong> Bij dit inkomen zou de draagkracht (${fmt(dk)}) hoger zijn dan het wettelijk bedrag — je betaalt nooit méér dan het wettelijk bedrag. Er is geen ETF-ruimte op dit inkomensniveau.`;
+  }
+
+  // ── Stats
+  document.getElementById('statRente').textContent = fmt(interest);
+
+  const groei = Math.abs(netto);
+  document.getElementById('statGroei').textContent = (netto > 0 ? '+' : '−') + fmt(groei);
+  document.getElementById('statGroei').style.color = netto <= 0 ? 'var(--red)' : 'var(--green)';
+  document.getElementById('statGroeiSub').textContent =
+    netto <= 0
+      ? `Schuld groeit ${fmt(groei)}/mnd`
+      : `Schuld daalt ${fmt(groei)}/mnd`;
+
+  document.getElementById('statEtf').textContent = fmt(etfRoom);
+
+  // ── Eindsaldo stat — run a quick simulation to get the final debt
+  const { finalDebt } = simulate(ink, schuld, rente, jaren, drempel);
+  const eindEl  = document.getElementById('statEind');
+  const eindSub = document.getElementById('statEindSub');
+  document.getElementById('statEindLbl').textContent = `Schuld na ${jaren} jr`;
+  ticker(eindEl, finalDebt);
+  if (finalDebt < 1) {
+    eindEl.style.color  = 'var(--green)';
+    eindSub.textContent = '→ volledig afgelost';
+  } else {
+    eindEl.style.color  = 'var(--blue)';
+    eindSub.textContent = '→ kwijtgescholden';
+  }
+
+  // ── Draagkracht live breakdown
+  const box  = document.getElementById('dkExplainer');
+  document.getElementById('dkbInk').textContent     = fmt(ink) + '/jaar';
+  document.getElementById('dkbDrempel').textContent = '− ' + fmt(drempel) + '/jaar';
+
+  if (over <= 0) {
+    document.getElementById('dkbOverLbl').innerHTML  = '= Inkomen ≤ drempel';
+    document.getElementById('dkbOver').textContent   = '→ €0 over';
+    document.getElementById('dkbRateRow').className  = 'dk-step dimmed';
+    document.getElementById('dkbDivRow').className   = 'dk-step dimmed';
+    document.getElementById('dkbYear').textContent   = '—';
+    document.getElementById('dkbDiv').textContent    = '—';
+    document.getElementById('dkbFinalRow').className = 'dk-step final-zero';
+    document.getElementById('dkbFinal').textContent  = '€0/mnd';
+    document.getElementById('dkb5Row').className     = 'dk-step dimmed';
+    document.getElementById('dkb5Val').textContent   = '—';
+  } else if (dk_raw <= DK_FLOOR) {
+    // Above drempel but ≤ €5 floor — SF35 rule kicks in
+    document.getElementById('dkbOverLbl').innerHTML  = '= Inkomen boven drempel';
+    document.getElementById('dkbOver').textContent   = fmt(over) + '/jaar';
+    document.getElementById('dkbRateRow').className  = 'dk-step';
+    document.getElementById('dkbDivRow').className   = 'dk-step';
+    const jaarDk = over * 0.04;
+    document.getElementById('dkbYear').textContent   = fmt(jaarDk) + '/jaar';
+    document.getElementById('dkbDiv').textContent    = fmt(jaarDk) + ' ÷ 12';
+    document.getElementById('dkbFinalRow').className = 'dk-step final-zero';
+    document.getElementById('dkbFinal').textContent  = fmt(dk_raw) + '/mnd';
+    document.getElementById('dkb5Row').className     = 'dk-step floor-active';
+    document.getElementById('dkb5Val').textContent   = `${fmt(dk_raw)} ≤ €5 → effectief €0`;
+  } else {
+    document.getElementById('dkbOverLbl').innerHTML  = '= Inkomen boven drempel';
+    document.getElementById('dkbOver').textContent   = fmt(over) + '/jaar';
+    document.getElementById('dkbRateRow').className  = 'dk-step';
+    document.getElementById('dkbDivRow').className   = 'dk-step';
+    const jaarDk = over * 0.04;
+    document.getElementById('dkbYear').textContent   = fmt(jaarDk) + '/jaar';
+    document.getElementById('dkbDiv').textContent    = fmt(jaarDk) + ' ÷ 12';
+    document.getElementById('dkbFinalRow').className = 'dk-step final';
+    document.getElementById('dkbFinal').textContent  = fmt(dk_raw) + '/mnd';
+    document.getElementById('dkb5Row').className     = 'dk-step floor-pass';
+    document.getElementById('dkb5Val').textContent   = `> €5 — betaling vereist`;
+  }
+}
+
+// ─────────────────────────────────────────────────────
+//  BUILD: PAYMENT CURVE CHART
+// ─────────────────────────────────────────────────────
+function buildCurve() {
+  const { ink, schuld, rente, jaren, drempel } = inp();
+  const wm = annuiteit(schuld, rente, jaren);
+  const STEP = 5000, MAX = 300000;
+  const xs = [], dkArr = [], wmArr = [], payArr = [];
+
+  for (let i = 0; i <= MAX; i += STEP) {
+    xs.push(i === 0 ? '€0' : `€${i/1000}k`);
+    const d_raw = draagkracht(i, drempel);
+    const d     = d_raw > DK_FLOOR ? d_raw : 0; // SF35 €5-drempelregel
+    dkArr.push(+d.toFixed(2));
+    wmArr.push(+wm.toFixed(2));
+    payArr.push(+Math.min(d, wm).toFixed(2));
+  }
+
+  const curIdx = Math.min(Math.round(ink / STEP), xs.length - 1);
+  const vLine  = {
+    id: 'vLine',
+    afterDraw(ch) {
+      const { ctx, chartArea: ca, scales: { x } } = ch;
+      const xp = x.getPixelForValue(curIdx);
+      ctx.save();
+      ctx.beginPath();
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = '#2350d4';
+      ctx.lineWidth = 1.5;
+      ctx.moveTo(xp, ca.top);
+      ctx.lineTo(xp, ca.bottom);
+      ctx.stroke();
+      ctx.restore();
+    }
+  };
+
+  destroy('curve');
+  charts.curve = new Chart(document.getElementById('chartCurve'), {
+    type: 'line', plugins: [vLine],
+    data: {
+      labels: xs,
+      datasets: [
+        { label: 'Te betalen (laagste van twee)', data: payArr, borderColor: '#1a1917', backgroundColor: 'rgba(26,25,23,0.04)', borderWidth: 2.5, fill: true, tension: 0, pointRadius: 0 },
+        { label: 'Draagkracht (4%-formule)', data: dkArr, borderColor: '#2350d4', borderWidth: 1.5, borderDash: [5,3], fill: false, tension: 0, pointRadius: 0 },
+        { label: `Wettelijk (${fmt(wm)}/mnd)`, data: wmArr, borderColor: '#b85c0c', borderWidth: 1.5, borderDash: [7,3], fill: false, tension: 0, pointRadius: 0 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 }, color: '#706d67' } },
+        tooltip: { callbacks: { label: c => `${c.dataset.label}: ${fmt(c.parsed.y)}/mnd` } }
+      },
+      scales: {
+        x: { ticks: { maxTicksLimit: 10, font: { size: 10 }, color: '#a39f99' }, grid: { display: false } },
+        y: { ticks: { callback: v => fmt(v), font: { size: 10 }, color: '#a39f99' }, grid: { color: '#e2dfd8' } }
+      }
+    }
+  });
+
+  // Curve insight
+  const dk_c  = draagkracht(ink, drempel) > DK_FLOOR ? draagkracht(ink, drempel) : 0;
+  const pay  = Math.min(dk_c, wm);
+  const room = Math.max(0, wm - pay);
+  const crossover = drempel + wm * 12 / 0.04;
+  document.getElementById('curveInsight').innerHTML =
+    `Bij je huidige inkomen (${fmt(ink)}) betaal je <strong>${fmt(pay)}/mnd</strong>. ` +
+    (room > 0
+      ? `Je houdt <strong>${fmt(room)}/mnd</strong> over t.o.v. het wettelijk bedrag — dat is je ETF-ruimte.`
+      : `Je betaalt het wettelijk bedrag; draagkracht > wettelijk.`) +
+    ` Draagkracht = wettelijk bij ~${fmt(crossover)} jaarinkomen.`;
+}
+
+// ─────────────────────────────────────────────────────
+//  BUILD: DEBT TRAJECTORY CHART
+// ─────────────────────────────────────────────────────
+function buildDebt() {
+  const { ink, schuld, rente, jaren, drempel } = inp();
+  const r1 = simulate(ink,        schuld, rente, jaren, drempel);
+  const r2 = simulate(ink * 1.75, schuld, rente, jaren, drempel);
+  const r3 = simulate(9999999,    schuld, rente, jaren, drempel);
+
+  const labels = Array.from({ length: jaren + 1 }, (_, i) => i === 0 ? 'Nu' : `${i}`);
+
+  document.getElementById('sumKwit').textContent = fmt(r1.finalDebt);
+  document.getElementById('sumPaid').textContent = fmt(r1.totalPaid);
+  document.getElementById('sumEtf').textContent  = fmt(r1.etfValue);
+
+  destroy('debt');
+  charts.debt = new Chart(document.getElementById('chartDebt'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: `Schuld — min. betalen (${fmt(ink)}/jr)`, data: r1.pts, borderColor: '#2350d4', backgroundColor: 'rgba(35,80,212,0.06)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0 },
+        { label: `Schuld — inkomen ×1,75 (${fmt(ink*1.75)}/jr)`, data: r2.pts, borderColor: '#7c3aed', borderWidth: 2, borderDash: [5,3], fill: false, tension: 0.3, pointRadius: 0 },
+        { label: 'Schuld — altijd wettelijk betalen', data: r3.pts, borderColor: '#1a7a47', borderWidth: 1.5, borderDash: [3,3], fill: false, tension: 0.3, pointRadius: 0 },
+        { label: `ETF-portfolio @ 7%/jr (${fmt(ink)}/jr inkomen)`, data: r1.etfPts, borderColor: '#b85c0c', borderWidth: 2.5, borderDash: [6,2], fill: false, tension: 0.3, pointRadius: 0 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 }, color: '#706d67' } },
+        tooltip: { callbacks: { label: c => `${c.dataset.label}: ${fmt(c.parsed.y)}` } }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Jaar', font: { size: 10 }, color: '#a39f99' }, ticks: { maxTicksLimit: 12, font: { size: 10 }, color: '#a39f99' }, grid: { color: '#e2dfd8' } },
+        y: { ticks: { callback: v => fmt(v), font: { size: 10 }, color: '#a39f99' }, grid: { color: '#e2dfd8' } }
+      }
+    }
+  });
+
+  // Debt insight
+  const wmFinalYear     = annuiteit(r1.finalDebt, 2.5, 1);
+  const crossoverFinalInk = drempel + wmFinalYear * 12 / 0.04;
+
+  document.getElementById('debtInsight').innerHTML =
+    `<strong>Wat levert de strategie op?</strong> Je betaalt in 35 jaar slechts <strong>${fmt(r1.totalPaid)}</strong> aan DUO. ` +
+    `De resterende schuld (<strong>${fmt(r1.finalDebt)}</strong>) wordt in 2060 kwijtgescholden. ` +
+    `Ondertussen groeit je ETF-portfolio naar <strong>${fmt(r1.etfValue)}</strong>.`;
+
+  // ── Strategy analysis
+  const wm_now        = annuiteit(schuld, rente, jaren);
+  const dk_eff        = draagkracht(ink, drempel) > DK_FLOOR ? draagkracht(ink, drempel) : 0;
+  const etfContrib    = Math.max(0, wm_now - dk_eff); // monthly ETF assumption
+
+  // Three income thresholds
+  // (1) debt direction: payment > monthly interest → debt shrinks
+  //     At post-lock rate — the long-term reality that matters most
+  const breakEvenPost = drempel + (schuld * POST_LOCK_RATE / 100) / 0.04;
+  const breakEvenCur  = drempel + (schuld * rente / 100) / 0.04;
+  // (2) full payoff: draagkracht = full annuity → debt reaches €0 by 2060
+  const fullPayoffInc = drempel + wm_now * 12 / 0.04;
+
+  // Which zone is the user in? (use post-lock threshold as the durable benchmark)
+  const zone = ink < breakEvenPost ? 1 : (ink < fullPayoffInc ? 2 : 3);
+  // Edge: currently shrinking but will grow again after lock expires?
+  const shrinkingNowGrowsLater = ink >= breakEvenCur && ink < breakEvenPost;
+
+  const zoneHtml = (n, dot, label, range, extra = '') => {
+    const active = zone === n;
+    const warn   = active && (n === 1 || shrinkingNowGrowsLater);
+    return `<div class="sa-zone${active ? ' zone-active' : ''}${warn ? ' zone-warn' : ''}">
+      <span class="sa-zone-dot" style="color:${n===1?'var(--red)':n===2?'var(--amber)':'var(--green)'}">${dot}</span>
+      <span class="sa-zone-lbl">${label}</span>
+      <span class="sa-zone-rng">${range}</span>
+      ${active ? `<span class="sa-zone-you">jij</span>` : ''}
+    </div>${extra}`;
+  };
+
+  // Comparison: min betalen (A) vs altijd wettelijk (B)
+  const advantagePaid   = r3.totalPaid - r1.totalPaid;  // less paid to DUO
+  const advantageKwit   = r1.finalDebt;                 // debt written off
+  const advantageEtf    = r1.etfValue;                  // ETF built up
+  // Resilience: even if law changes, how does A compare to B?
+  const netIfLawChanges = r1.etfValue - r1.finalDebt;   // ETF minus remaining debt to repay
+  const resilient       = netIfLawChanges > 0;
+
+  // Update ETF note with actual assumed amount
+  document.getElementById('etfNote').textContent =
+    `ETF-aanname: ~${fmt(etfContrib)}/mnd (= wettelijk − draagkracht bij huidig inkomen) @ 7%/jr compound. ` +
+    `Dit verandert als de rente na 2027 wijzigt.`;
+
+  document.getElementById('stratAnalysis').innerHTML = `
+    <div class="sa-title">Strategie-analyse</div>
+
+    <div class="sa-zones">
+      ${zoneHtml(1, '●', 'Schuld groeit', `ink &lt; ${fmt(breakEvenPost)} (scenario: 2,33% na 2028)`,
+        shrinkingNowGrowsLater
+          ? `<div class="note" style="margin:0.15rem 0 0.1rem 1.4rem;color:var(--amber)">⚠ Nu krimpt je schuld nog (bij 0,46%), maar na de renteherziening in 2028 groeit hij weer bij dit inkomen.</div>`
+          : ''
+      )}
+      ${zoneHtml(2, '●', 'Schuld krimpt — deels kwijtgescholden in 2060',
+        `${fmt(breakEvenPost)} – ${fmt(fullPayoffInc)}`)}
+      ${zoneHtml(3, '●', 'Volledig afgelost — geen kwijtschelding nodig',
+        `ink ≥ ${fmt(fullPayoffInc)}`)}
+    </div>
+
+    <table class="sa-cmp">
+      <tr>
+        <th>Strategie</th>
+        <th>Betaald DUO</th>
+        <th>Kwijtgescholden</th>
+        <th>ETF 2060*</th>
+      </tr>
+      <tr>
+        <td><strong>A — min betalen</strong></td>
+        <td class="neg">${fmt(r1.totalPaid)}</td>
+        <td class="pos">${fmt(r1.finalDebt)}</td>
+        <td class="pos">${fmt(r1.etfValue)}</td>
+      </tr>
+      <tr>
+        <td><strong>B — altijd wettelijk</strong></td>
+        <td class="neg">${fmt(r3.totalPaid)}</td>
+        <td class="dim">€0</td>
+        <td class="dim">€0</td>
+      </tr>
+      <tr>
+        <td>Voordeel A</td>
+        <td class="pos">+${fmt(advantagePaid)} minder</td>
+        <td class="pos">+${fmt(advantageKwit)}</td>
+        <td class="pos">+${fmt(advantageEtf)}</td>
+      </tr>
+    </table>
+
+    <div class="sa-risk">
+      <strong>Risico: wet verandert vóór 2060.</strong>
+      ${resilient
+        ? `Zelfs dan: je ETF (${fmt(r1.etfValue)}) minus de dan nog openstaande schuld (${fmt(r1.finalDebt)}) = <strong>+${fmt(netIfLawChanges)} netto voordeel</strong> t.o.v. Strategie B. De kwijtschelding is een bonus, niet de fundering van de strategie.`
+        : `Let op: je ETF (${fmt(r1.etfValue)}) dekt de restschuld (${fmt(r1.finalDebt)}) niet volledig. Overweeg een hogere maandelijkse ETF-inleg, of een hogere inkomensdoelstelling.`
+      }
+    </div>`;
+}
+
+// ─────────────────────────────────────────────────────
+//  BUILD: SCENARIO TABLE
+// ─────────────────────────────────────────────────────
+function buildTable() {
+  const { ink, schuld, rente, jaren, drempel } = inp();
+  const yearsUntilLate = Math.max(1, jaren - 5);
+  const { finalDebt: lateDebt } = simulate(ink, schuld, rente, yearsUntilLate, drempel);
+
+  const lateRente  = 3.5;
+  const lateJaren  = 5;
+  const lateDrempel= 47000;
+  const lateWm     = annuiteit(lateDebt, lateRente, lateJaren);
+
+  // Crossover: income where draagkracht = wettelijk for this 5-year window
+  const crossoverLate = lateDrempel + lateWm * 12 / 0.04;
+
+  const rows = [
+    { label: 'Werkloos / laag inkomen', ink: 30000  },
+    { label: '€45k',                   ink: 45000  },
+    { label: '€65k',                   ink: 65000  },
+    { label: '€100k',                  ink: 100000 },
+    { label: '€150k',                  ink: 150000 },
+    { label: '€250k',                  ink: 250000 },
+    { label: '€400k',                  ink: 400000 },
+  ];
+
+  let html = `<tr>
+    <th>Inkomen / jaar</th>
+    <th>Draagkracht</th>
+    <th>Wettelijk</th>
+    <th>Je betaalt</th>
+    <th>Bindend</th>
+    <th>Kwijtgescholden</th>
+  </tr>`;
+
+  let crossoverRowInserted = false;
+  rows.forEach(sc => {
+    // Insert the crossover row just before the first row that exceeds it
+    if (!crossoverRowInserted && sc.ink >= crossoverLate) {
+      crossoverRowInserted = true;
+      html += `<tr style="background:var(--amber-bg);">
+        <td><strong>${fmt(crossoverLate)}</strong><br><span style="font-size:0.68rem;color:var(--amber);font-weight:600">omslagpunt</span></td>
+        <td class="mono blue">${fmt(lateWm)}/mnd</td>
+        <td class="mono">${fmt(lateWm)}/mnd</td>
+        <td class="mono"><strong>${fmt(lateWm)}/mnd</strong></td>
+        <td style="color:var(--amber);font-weight:600">gelijk</td>
+        <td class="red">€0 — volledig betaald</td>
+      </tr>`;
+    }
+
+    const dk_raw  = draagkracht(sc.ink, lateDrempel);
+    const dk      = dk_raw > DK_FLOOR ? dk_raw : 0; // SF35 €5-drempelregel
+    const pay     = Math.min(dk, lateWm);
+    const interest= lateDebt * lateRente / 100 / 12;
+    const forgiven= Math.max(0, lateDebt - (pay - interest) * 60);
+    const binding = dk <= lateWm ? 'draagkracht' : 'wettelijk';
+    const isHl    = sc.ink >= ink * 0.9 && sc.ink <= ink * 1.1;
+
+    html += `<tr ${isHl ? 'class="hl"' : ''}>
+      <td><strong>${sc.label}</strong></td>
+      <td class="mono blue">${fmt(dk)}/mnd</td>
+      <td class="mono">${fmt(lateWm)}/mnd</td>
+      <td class="mono"><strong>${fmt(pay)}/mnd</strong></td>
+      <td class="${binding === 'draagkracht' ? 'green' : 'red'}">${binding}</td>
+      <td class="red">${fmt(forgiven)}</td>
+    </tr>`;
+  });
+
+  // Insert at end if crossover is above all rows
+  if (!crossoverRowInserted) {
+    html += `<tr style="background:var(--amber-bg);">
+      <td><strong>${fmt(crossoverLate)}</strong><br><span style="font-size:0.68rem;color:var(--amber);font-weight:600">omslagpunt</span></td>
+      <td class="mono blue">${fmt(lateWm)}/mnd</td>
+      <td class="mono">${fmt(lateWm)}/mnd</td>
+      <td class="mono"><strong>${fmt(lateWm)}/mnd</strong></td>
+      <td style="color:var(--amber);font-weight:600">gelijk</td>
+      <td class="red">€0 — volledig betaald</td>
+    </tr>`;
+  }
+
+  document.getElementById('scTable').innerHTML = html;
+  document.getElementById('scNote').innerHTML =
+    `Geschatte schuld in 2055: <strong>${fmt(lateDebt)}</strong> · rente: ${lateRente}% · ` +
+    `drempel geïndexeerd naar ~${fmt(lateDrempel)} (minimumloon +2%/jr). ` +
+    `"Kwijtgescholden" = restschuld na 5 jaar betalingen die per jan 2060 verdwijnt. ` +
+    `Omslagpunt = inkomen waarbij draagkracht precies het wettelijk maandbedrag dekt.`;
+}
+
+// ─────────────────────────────────────────────────────
+//  TAB MANAGEMENT
+// ─────────────────────────────────────────────────────
+function activeTab() {
+  return document.querySelector('.tab-btn.active')?.dataset.tab || 'curve';
+}
+function buildActive() {
+  const t = activeTab();
+  dirty[t] = false;
+  if (t === 'curve')     buildCurve();
+  else if (t === 'debt') buildDebt();
+  else                   buildTable();
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const pane = document.getElementById('pane-' + btn.dataset.tab);
+    pane.classList.add('active');
+    refreshTabTrack();
+    if (dirty[btn.dataset.tab]) buildActive();
+  });
+});
+
+// ─────────────────────────────────────────────────────
+//  UPDATE ALL
+// ─────────────────────────────────────────────────────
+function updateAll() {
+  updateCalc();
+  Object.keys(dirty).forEach(k => dirty[k] = true);
+  buildActive();
+}
+
+// ─────────────────────────────────────────────────────
+//  UI TOGGLES
+// ─────────────────────────────────────────────────────
+document.getElementById('advToggle').addEventListener('click', () => {
+  document.getElementById('advGrid').classList.toggle('open');
+  document.getElementById('advArrow').classList.toggle('open');
+});
+
+// ─────────────────────────────────────────────────────
+//  PRESET PILLS
+// ─────────────────────────────────────────────────────
+document.querySelectorAll('.pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.getElementById('inkomen').value = btn.dataset.val;
+    updateAll();
+  });
+});
+
+// ─────────────────────────────────────────────────────
+//  INPUT EVENTS
+// ─────────────────────────────────────────────────────
+document.getElementById('inkomen').addEventListener('input', updateAll);
+['schuld', 'rente', 'jaren', 'drempel'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input',  updateAll);
+  el.addEventListener('change', updateAll);
+});
+document.getElementById('aanloopJaar').addEventListener('change', updateAll);
+
+// ─────────────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────────────
+updateAll();
+// Set initial tab track position after layout
+requestAnimationFrame(() => refreshTabTrack());
+window.addEventListener('resize', refreshTabTrack);
+</script>
+
+<!-- Footer -->
+<footer style="max-width:960px;margin:2rem auto 0;padding:1.25rem 0.85rem;border-top:1px solid #e2dfd8;font-size:0.68rem;color:#a39f99;line-height:1.6">
+  <p><strong style="color:#706d67">Bronnen en disclaimer</strong></p>
+  <p style="margin-top:0.3rem">
+    <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" style="color:#2350d4">DUO Terugbetalen</a> ·
+    <a href="https://www.duo.nl/particulier/rente/rente-voor-terugbetalers.jsp" target="_blank" style="color:#2350d4">DUO Renteoverzicht</a> ·
+    <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" style="color:#2350d4">WSF 2000 (wetten.overheid.nl)</a> ·
+    <a href="https://mijn.duo.nl" target="_blank" style="color:#2350d4">Mijn DUO</a>
+  </p>
+  <p style="margin-top:0.4rem">
+    Deze calculator is uitsluitend bedoeld als rekenmodel voor inzicht en scenario-analyse. Het vormt geen juridisch of financieel advies. Controleer altijd via Mijn DUO voor je actuele schuld, rente en maandbedrag.
+    De toekomstige rente na de huidige vergrendelingsperiode is onbekend; de calculator gebruikt 2,33% (gepubliceerd SF35 tarief 2026) als scenario-aanname.
+  </p>
+  <p style="margin-top:0.4rem">
+    Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>
+  </p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,37 @@
+# DUO SF35 Studieschuld Calculator
+
+An interactive Dutch student loan (SF35 leenstelsel) calculator — open in any browser, no server needed.
+
+**Live:** [obywan-afk.github.io/studieschuld](https://obywan-afk.github.io/studieschuld)
+
+## What it does
+
+- Calculates your monthly DUO payment (draagkracht vs wettelijk maandbedrag)
+- Shows 35-year debt trajectory under three scenarios
+- Models the ETF investment strategy (invest the freed-up amount instead of over-paying DUO)
+- Explains the three income zones: debt grows / shrinks / fully amortised
+- Compares Strategy A (min payment + kwijtschelding 2060) vs Strategy B (always pay full annuity)
+- Accounts for the SF35 €5 floor rule (Art. 6.10 lid 3 WSF 2000)
+- Date-based interest lock calculation from your aanloopfase start year
+
+## Key SF35 rules implemented
+
+| Rule | Detail |
+|---|---|
+| Draagkracht | `4% × (inkomen − drempel) / 12` |
+| €5 floor | Only pay if draagkracht > €5/mnd |
+| Drempel 2026 | €26.819,42 (single) / €38.351,77 (partner) |
+| Rate lock | 5 years from aanloopfase start, based on Oct–Sep 5yr bond avg |
+| Kwijtschelding | Automatic after 35 years (Art. 6.16 lid 1 WSF 2000) |
+| Aflosvrije periode | Max 60 months, extends end date 1:1 |
+
+## Sources
+
+- [DUO Terugbetalen](https://www.duo.nl/particulier/terugbetalen/)
+- [DUO Renteoverzicht](https://www.duo.nl/particulier/rente/rente-voor-terugbetalers.jsp)
+- [WSF 2000](https://wetten.overheid.nl/BWBR0011453)
+
+## Disclaimer
+
+Scenario model only. Not legal or financial advice. Always verify via [Mijn DUO](https://mijn.duo.nl).
+Post-lock rate (2,33%) is the 2026 published SF35 rate used as a scenario assumption — the actual 2028+ rate is unknown.
