@@ -73,12 +73,29 @@ body {
 
 /* ── HEADER ── */
 header {
+  position: relative;
   margin-bottom: 1.25rem;
   opacity: 0;
   transform: translateY(10px);
   animation: card-in 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
   animation-delay: 0ms;
 }
+#langToggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--card);
+  border: 1px solid var(--card-bd);
+  border-radius: 7px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+#langToggle:hover { background: var(--blue-bg); border-color: var(--blue-bd); color: var(--blue); }
 header h1 {
   font-size: 1.1rem;
   font-weight: 700;
@@ -207,6 +224,53 @@ input[type="range"]::-moz-range-thumb {
 .pill:hover  { border-color: var(--blue); color: var(--blue); background: var(--blue-bg); }
 .pill.active { border-color: var(--blue); color: var(--blue); background: var(--blue-bg); font-weight: 700; }
 .pill:active { transform: scale(0.94); }
+
+/* Context toggles (partner / abroad) */
+.ctx-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+.ctx-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--card-bd);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.ctx-toggle:hover { border-color: var(--blue); }
+.ctx-toggle input { accent-color: var(--blue); width: 15px; height: 15px; cursor: pointer; }
+.ctx-toggle.on { border-color: var(--blue); background: var(--blue-bg); color: var(--blue); font-weight: 600; }
+
+.partner-fields {
+  display: none;
+  margin-top: 0.6rem;
+  gap: 0.6rem;
+  grid-template-columns: 1fr;
+}
+.partner-fields.open { display: grid; }
+@media(min-width:600px){ .partner-fields.open { grid-template-columns: 1fr 1fr; } }
+
+.ctx-note {
+  font-size: 0.68rem;
+  color: var(--text-2);
+  line-height: 1.55;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 6px;
+  background: var(--blue-bg);
+  border: 1px solid var(--blue-bd);
+}
+.ctx-note.amber { background: var(--amber-bg); border-color: var(--amber-bd); }
+.ctx-note strong { color: var(--text); }
 
 /* Advanced toggle */
 .adv-toggle {
@@ -509,6 +573,39 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* ══════════════
+   SMART SIGNALS
+══════════════ */
+.signal {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  padding: 0.8rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--card-bd);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  margin-bottom: 0.5rem;
+  animation: pane-in 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.signal:last-child { margin-bottom: 0; }
+.signal-icon { font-size: 1.05rem; flex-shrink: 0; line-height: 1.3; }
+.signal-body { flex: 1; color: var(--text-2); }
+.signal-body strong { color: var(--text); }
+.signal-act {
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+.signal.green { background: var(--green-bg); border-color: var(--green-bd); }
+.signal.amber { background: var(--amber-bg); border-color: var(--amber-bd); }
+.signal.blue  { background: var(--blue-bg);  border-color: var(--blue-bd);  }
+.signal.neutral { background: var(--canvas); border-color: var(--card-bd); }
+.signal.green .signal-body strong { color: var(--green); }
+.signal.amber .signal-body strong { color: var(--amber); }
+.signal.blue  .signal-body strong { color: var(--blue);  }
+
+/* ══════════════
    CARD 3 — CHARTS
 ══════════════ */
 
@@ -644,6 +741,18 @@ input[type="range"]::-moz-range-thumb {
   line-height: 1.5;
 }
 
+/* Return sensitivity block */
+.sens-block {
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--card-bd);
+}
+.sa-cmp tr.sens-chosen td {
+  background: var(--green-bg);
+  font-weight: 700;
+  color: var(--text);
+}
+
 /* Strategy analysis */
 .strat-analysis {
   margin-top: 1rem;
@@ -769,39 +878,40 @@ input[type="range"]::-moz-range-thumb {
 <div class="page">
 
 <header>
-  <h1>DUO SF35 Studieschuld Calculator</h1>
-  <p>Bereken je maandelijkse verplichting, schuldontwikkeling en strategie · voor iedereen met een SF35-lening (leenstelsel, na 2015)</p>
+  <button id="langToggle" type="button" aria-label="Switch language">EN</button>
+  <h1 data-i18n="appTitle">DUO SF35 Studieschuld Calculator</h1>
+  <p data-i18n="appSubtitle">Bereken je maandelijkse verplichting, schuldontwikkeling en strategie · voor iedereen met een SF35-lening (leenstelsel, na 2015)</p>
 </header>
 
 <!-- ══ CARD 0: INTRO ══ -->
 <div class="card">
   <div style="font-size:0.8rem;color:var(--text-2);line-height:1.65;">
-    <p style="margin-bottom:0.6rem">Deze calculator helpt je begrijpen hoeveel je maandelijks aan DUO betaalt, hoe je schuld zich ontwikkelt over 35 jaar, en wat de strategie "minimaal betalen + investeren" concreet oplevert.</p>
-    <p style="margin-bottom:0.6rem"><strong>Vul in:</strong> je bruto jaarinkomen (slider) en je eigen schuldgegevens via <em>Pas schuld, rente, looptijd aan</em>. Alle waarden vind je in <a href="https://mijn.duo.nl" target="_blank" style="color:var(--blue)">Mijn DUO</a>.</p>
+    <p style="margin-bottom:0.6rem" data-i18n-html="introP1">Deze calculator helpt je begrijpen hoeveel je maandelijks aan DUO betaalt, hoe je schuld zich ontwikkelt over 35 jaar, en wat de strategie "minimaal betalen + investeren" concreet oplevert.</p>
+    <p style="margin-bottom:0.6rem" data-i18n-html="introP2"><strong>Vul in:</strong> je bruto jaarinkomen (slider) en je eigen schuldgegevens via <em>Pas schuld, rente, looptijd aan</em>. Alle waarden vind je in <a href="https://mijn.duo.nl" target="_blank" style="color:var(--blue)">Mijn DUO</a>.</p>
     <details style="margin-top:0.5rem">
-      <summary style="cursor:pointer;font-weight:600;font-size:0.78rem;color:var(--text)">Wat is het SF35 leenstelsel?</summary>
+      <summary style="cursor:pointer;font-weight:600;font-size:0.78rem;color:var(--text)" data-i18n="introQ1">Wat is het SF35 leenstelsel?</summary>
       <div style="margin-top:0.5rem;padding-left:0.75rem;border-left:2px solid var(--card-bd)">
-        <p style="margin-bottom:0.4rem">SF35 (ook wel "leenstelsel") is het studieloanstelsel voor studenten die <strong>na 1 september 2015</strong> zijn begonnen met studeren in het hoger onderwijs of mbo-4. Studieschuld wordt terugbetaald over maximaal 35 jaar, afhankelijk van je inkomen.</p>
-        <p style="margin-bottom:0.4rem"><strong>Kernregels:</strong> je betaalt 4% van het inkomen boven de drempel (€26.819 in 2026), maar nooit meer dan het wettelijk maandbedrag (de annuïteit). Als draagkracht ≤ €5/mnd, betaal je niets. Na 35 jaar wordt het resterende saldo automatisch kwijtgescholden.</p>
-        <p style="margin-bottom:0.2rem"><strong>Rente:</strong> vastgesteld voor 5 jaar, gebaseerd op het gemiddelde van de 5-jaars staatsobligaties (okt–sep). De rente voor de aflosperiode telt vanaf het begin van de <em>aanloopfase</em> (het jaar na het stoppen van de studiefinanciering).</p>
-        <p style="margin-top:0.35rem;font-size:0.72rem;color:var(--text-3)">Bronnen: <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" style="color:var(--blue)">DUO Terugbetalen</a> · <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" style="color:var(--blue)">WSF 2000</a></p>
+        <p style="margin-bottom:0.4rem" data-i18n-html="introA1a">SF35 (ook wel "leenstelsel") is het studieleningstelsel voor studenten die <strong>na 1 september 2015</strong> zijn begonnen met studeren in het hoger onderwijs of mbo-4. Studieschuld wordt terugbetaald over maximaal 35 jaar, afhankelijk van je inkomen.</p>
+        <p style="margin-bottom:0.4rem" data-i18n-html="introA1b"><strong>Kernregels:</strong> je betaalt 4% van het inkomen boven de drempel (€26.819 in 2026), maar nooit meer dan het wettelijk maandbedrag (de annuïteit). Als draagkracht ≤ €5/mnd, betaal je niets. Na 35 jaar wordt het resterende saldo automatisch kwijtgescholden.</p>
+        <p style="margin-bottom:0.2rem" data-i18n-html="introA1c"><strong>Rente:</strong> vastgesteld voor 5 jaar, gebaseerd op het gemiddelde van de 5-jaars staatsobligaties (okt–sep). De rente voor de aflosperiode telt vanaf het begin van de <em>aanloopfase</em> (het jaar na het stoppen van de studiefinanciering).</p>
+        <p style="margin-top:0.35rem;font-size:0.72rem;color:var(--text-3)" data-i18n-html="introSrc">Bronnen: <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" style="color:var(--blue)">DUO Terugbetalen</a> · <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" style="color:var(--blue)">WSF 2000</a></p>
       </div>
     </details>
     <details style="margin-top:0.4rem">
-      <summary style="cursor:pointer;font-weight:600;font-size:0.78rem;color:var(--text)">SF35 rentepercentages per jaar</summary>
+      <summary style="cursor:pointer;font-weight:600;font-size:0.78rem;color:var(--text)" data-i18n="introQ2">SF35 rentepercentages per jaar</summary>
       <div style="margin-top:0.5rem;padding-left:0.75rem;border-left:2px solid var(--card-bd);font-size:0.73rem">
         <table style="border-collapse:collapse;width:100%">
           <tr style="color:var(--text-3);font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em">
-            <td style="padding:0.2rem 0.5rem 0.2rem 0">Jaar</td><td style="padding:0.2rem 0.5rem">SF35</td><td style="padding:0.2rem 0">Toelichting</td>
+            <td style="padding:0.2rem 0.5rem 0.2rem 0" data-i18n="rHdrYear">Jaar</td><td style="padding:0.2rem 0.5rem" data-i18n="rHdrSf35">SF35</td><td style="padding:0.2rem 0" data-i18n="rHdrNote">Toelichting</td>
           </tr>
-          <tr><td style="padding:0.15rem 0.5rem 0.15rem 0">2017–2022</td><td style="padding:0.15rem 0.5rem;color:var(--green);font-weight:600">0,00%</td><td style="padding:0.15rem 0;color:var(--text-3)">Historisch laag</td></tr>
-          <tr><td style="padding:0.15rem 0.5rem 0.15rem 0">2023</td><td style="padding:0.15rem 0.5rem;font-weight:600">0,46%</td><td style="padding:0.15rem 0;color:var(--text-3)">5-jaarsperiode start</td></tr>
+          <tr><td style="padding:0.15rem 0.5rem 0.15rem 0">2017–2022</td><td style="padding:0.15rem 0.5rem;color:var(--green);font-weight:600">0,00%</td><td style="padding:0.15rem 0;color:var(--text-3)" data-i18n="rNoteLow">Historisch laag</td></tr>
+          <tr><td style="padding:0.15rem 0.5rem 0.15rem 0">2023</td><td style="padding:0.15rem 0.5rem;font-weight:600">0,46%</td><td style="padding:0.15rem 0;color:var(--text-3)" data-i18n="rNoteStart">5-jaarsperiode start</td></tr>
           <tr><td style="padding:0.15rem 0.5rem 0.15rem 0">2024</td><td style="padding:0.15rem 0.5rem;font-weight:600">2,56%</td><td></td></tr>
           <tr><td style="padding:0.15rem 0.5rem 0.15rem 0">2025</td><td style="padding:0.15rem 0.5rem;font-weight:600">2,57%</td><td></td></tr>
-          <tr><td style="padding:0.15rem 0.5rem 0.15rem 0">2026</td><td style="padding:0.15rem 0.5rem;font-weight:600">2,33%</td><td style="padding:0.15rem 0;color:var(--text-3)">Huidig gepubliceerd tarief</td></tr>
+          <tr><td style="padding:0.15rem 0.5rem 0.15rem 0">2026</td><td style="padding:0.15rem 0.5rem;font-weight:600">2,33%</td><td style="padding:0.15rem 0;color:var(--text-3)" data-i18n="rNoteCur">Huidig gepubliceerd tarief</td></tr>
         </table>
-        <p style="margin-top:0.4rem;color:var(--text-3)">Let op: de rente voor jouw lening is vergrendeld voor 5 jaar vanaf de start van jouw aanloopfase. Vul hieronder in wanneer jouw aanloopfase begon om de vergrendeling correct te berekenen.</p>
-        <p style="margin-top:0.3rem;color:var(--text-3)"><a href="https://www.duo.nl/particulier/rente/rente-voor-terugbetalers.jsp" target="_blank" style="color:var(--blue)">→ DUO renteoverzicht</a></p>
+        <p style="margin-top:0.4rem;color:var(--text-3)" data-i18n="rExpl">Let op: de rente voor jouw lening is vergrendeld voor 5 jaar vanaf de start van jouw aanloopfase. Vul hieronder in wanneer jouw aanloopfase begon om de vergrendeling correct te berekenen.</p>
+        <p style="margin-top:0.3rem;color:var(--text-3)"><a href="https://www.duo.nl/particulier/rente/rente-voor-terugbetalers.jsp" target="_blank" style="color:var(--blue)" data-i18n="rExplLink">→ DUO renteoverzicht</a></p>
       </div>
     </details>
   </div>
@@ -810,7 +920,7 @@ input[type="range"]::-moz-range-thumb {
 <!-- ══ CARD 1: INCOME ══ -->
 <div class="card">
   <div class="income-header">
-    <span class="lbl">Bruto jaarinkomen</span>
+    <span class="lbl" data-i18n="incomeLabel">Bruto jaarinkomen</span>
     <span class="income-val" id="inkVal">€35.000</span>
   </div>
 
@@ -830,9 +940,35 @@ input[type="range"]::-moz-range-thumb {
     <button class="pill" data-val="150000">€150k</button>
   </div>
 
+  <!-- Context toggles: partner & abroad -->
+  <div class="ctx-toggles">
+    <label class="ctx-toggle" id="partnerToggle">
+      <input type="checkbox" id="partnerOn">
+      <span data-i18n="tgPartner">Ik heb een fiscaal partner</span>
+    </label>
+    <label class="ctx-toggle" id="abroadToggle">
+      <input type="checkbox" id="abroadOn">
+      <span data-i18n="tgAbroad">Ik woon in het buitenland</span>
+    </label>
+  </div>
+
+  <!-- Partner income (revealed when partner on) -->
+  <div class="partner-fields" id="partnerFields">
+    <div class="field">
+      <label data-i18n="lblPartnerInk">Bruto jaarinkomen partner (€)</label>
+      <input type="number" id="partnerInk" value="0" step="1000" min="0" max="500000">
+    </div>
+    <div class="field" style="align-self:end">
+      <p class="ctx-note" style="margin:0" data-i18n-html="notePartner"><strong>Let op:</strong> DUO erkent een partner pas bij huwelijk, geregistreerd partnerschap, notarieel samenlevingscontract, gezamenlijk kind, of gezamenlijk woningbezit. <strong>Hetzelfde adres alleen is niet voldoende.</strong> Bij een erkend partnerschap telt het partnerinkomen mee en geldt de hogere drempel (€38.351).</p>
+    </div>
+  </div>
+
+  <!-- Abroad reminder -->
+  <p class="ctx-note amber" id="abroadNote" style="display:none" data-i18n-html="noteAbroad"><strong>Buitenlands inkomen:</strong> DUO haalt dit niet automatisch op. Geef je bruto jaarinkomen elk jaar zélf door via Mijn DUO, vóór 1 januari van het betaaljaar — anders loopt je oude (mogelijk te hoge) maandbedrag door.</p>
+
   <button class="adv-toggle" id="advToggle">
     <span class="adv-arrow" id="advArrow">▶</span>
-    Jouw schuldgegevens invullen (schuld, rente, looptijd)
+    <span data-i18n="advSchuld">Jouw schuldgegevens invullen (schuld, rente, looptijd)</span>
   </button>
   <div class="adv-grid" id="advGrid">
     <div class="field">
@@ -848,11 +984,19 @@ input[type="range"]::-moz-range-thumb {
       <input type="number" id="jaren" value="35" step="1" min="1" max="35">
     </div>
     <div class="field">
-      <label>Drempel (€) <span style="font-weight:400;color:var(--text-3)">2026: €26.819</span></label>
+      <label data-i18n="lblDrempel">Drempel (€)</label>
       <input type="number" id="drempel" value="26819.42" step="100" min="10000" max="80000">
     </div>
+    <div class="field">
+      <label data-i18n="lblHuidigInk">Huidig inkomen nu (€/jr)</label>
+      <input type="number" id="huidigInk" value="" step="1000" min="0" max="500000" placeholder="= peiljaar">
+    </div>
+    <div class="field">
+      <label data-i18n="lblDuoBill">Wat DUO nu int (€/mnd)</label>
+      <input type="number" id="duoBill" value="" step="5" min="0" max="2000" placeholder="optioneel">
+    </div>
     <div class="field" style="grid-column:1/-1">
-      <label>Aanloopfase gestart (jaar) <span style="font-weight:400;color:var(--text-3)">→ voor rentelock-berekening</span></label>
+      <label data-i18n-html="lblAanloop">Aanloopfase gestart (jaar) <span style="font-weight:400;color:var(--text-3)">→ voor rentelock-berekening</span></label>
       <select id="aanloopJaar" style="width:100%;padding:0.4rem 0.5rem;border:1px solid var(--card-bd);border-radius:6px;background:var(--card);font-size:0.82rem;color:var(--text)">
         <option value="2018">2018 (lock t/m dec 2022, vervallen)</option>
         <option value="2019">2019 (lock t/m dec 2023)</option>
@@ -864,7 +1008,35 @@ input[type="range"]::-moz-range-thumb {
         <option value="2025">2025 (lock t/m dec 2029)</option>
         <option value="2026">2026 (lock t/m dec 2030)</option>
       </select>
-      <p style="margin-top:0.3rem;font-size:0.67rem;color:var(--text-3)">De aanloopfase begint op 1 januari van het jaar nadat je studiefinanciering stopte. De rente is vergrendeld voor 5 jaar vanaf dat moment.</p>
+      <p style="margin-top:0.3rem;font-size:0.67rem;color:var(--text-3)" data-i18n="noteAanloop">De aanloopfase begint op 1 januari van het jaar nadat je studiefinanciering stopte. De rente is vergrendeld voor 5 jaar vanaf dat moment.</p>
+    </div>
+  </div>
+
+  <button class="adv-toggle" id="advToggle2">
+    <span class="adv-arrow" id="advArrow2">▶</span>
+    <span data-i18n="advBeleg">Beleggings- &amp; belastingaannames (rendement, inflatie, box 3)</span>
+  </button>
+  <div class="adv-grid" id="advGrid2">
+    <div class="field">
+      <label data-i18n="lblReturn">Beleggingsrendement (%/jr)</label>
+      <input type="number" id="etfReturn" value="7" step="0.5" min="0" max="15">
+    </div>
+    <div class="field">
+      <label data-i18n="lblInflatie">Inflatie (%/jr)</label>
+      <input type="number" id="inflatie" value="2" step="0.1" min="0" max="10">
+    </div>
+    <div class="field">
+      <label data-i18n="lblOtherWealth">Overig box-3 vermogen (€)</label>
+      <input type="number" id="otherWealth" value="0" step="1000" min="0" max="5000000">
+    </div>
+    <div class="field" style="align-self:end">
+      <label class="ctx-toggle" style="width:100%;justify-content:flex-start" id="box3Toggle">
+        <input type="checkbox" id="box3On">
+        <span data-i18n="lblBox3">Box-3 heffing meerekenen</span>
+      </label>
+    </div>
+    <div class="field" style="grid-column:1/-1">
+      <p style="margin-top:0;font-size:0.67rem;color:var(--text-3)" data-i18n-html="noteBox3">Box-3 aanname (2026): vrijstelling €57.684 p.p., forfaitair rendement 6,04%, tarief 36% → effectief ~2,17%/jr boven de vrijstelling. Het nieuwe box-3 stelsel op basis van werkelijk rendement wordt ~2028 verwacht — dit is een aanname.</p>
     </div>
   </div>
 </div>
@@ -874,7 +1046,7 @@ input[type="range"]::-moz-range-thumb {
   <div class="result-layout">
     <!-- Hero -->
     <div class="hero" id="hero">
-      <div class="hero-lbl">Te betalen / maand</div>
+      <div class="hero-lbl" data-i18n="heroLbl">Te betalen / maand</div>
       <div class="hero-num" id="heroNum">—</div>
       <div class="hero-tag" id="heroTag">—</div>
     </div>
@@ -884,7 +1056,7 @@ input[type="range"]::-moz-range-thumb {
       <div class="comp-row" id="rowDk">
         <div class="comp-left">
           <div class="comp-name">
-            Draagkracht
+            <span data-i18n="compDk">Draagkracht</span>
             <span id="badgeDk" style="display:none"></span>
           </div>
           <div class="comp-formula" id="fmtDk">—</div>
@@ -894,7 +1066,7 @@ input[type="range"]::-moz-range-thumb {
       <div class="comp-row" id="rowWm">
         <div class="comp-left">
           <div class="comp-name">
-            Wettelijk maandbedrag
+            <span data-i18n="compWm">Wettelijk maandbedrag</span>
             <span id="badgeWm" style="display:none"></span>
           </div>
           <div class="comp-formula" id="fmtWm">—</div>
@@ -906,14 +1078,14 @@ input[type="range"]::-moz-range-thumb {
 
   <!-- Draagkracht live breakdown -->
   <div class="dk-explainer" id="dkExplainer">
-    <div class="dk-title">Draagkracht — live berekening</div>
+    <div class="dk-title" data-i18n="dkTitle">Draagkracht — live berekening</div>
 
     <div class="dk-step">
-      <span class="dk-step-lbl">Bruto jaarinkomen</span>
+      <span class="dk-step-lbl" data-i18n="dkStepInk">Bruto jaarinkomen</span>
       <span class="dk-step-val" id="dkbInk">—</span>
     </div>
     <div class="dk-step">
-      <span class="dk-step-lbl">− Drempel</span>
+      <span class="dk-step-lbl" data-i18n="dkStepDrempel">− Drempel</span>
       <span class="dk-step-val subtract" id="dkbDrempel">—</span>
     </div>
     <div class="dk-step result" id="dkbOverRow">
@@ -921,25 +1093,25 @@ input[type="range"]::-moz-range-thumb {
       <span class="dk-step-val" id="dkbOver">—</span>
     </div>
     <div class="dk-step" id="dkbRateRow">
-      <span class="dk-step-lbl">× 4% / jaar</span>
+      <span class="dk-step-lbl" data-i18n="dkStepRate">× 4% / jaar</span>
       <span class="dk-step-val" id="dkbYear">—</span>
     </div>
     <div class="dk-step" id="dkbDivRow">
-      <span class="dk-step-lbl">÷ 12</span>
+      <span class="dk-step-lbl" data-i18n="dkStepDiv">÷ 12</span>
       <span class="dk-step-val" id="dkbDiv">—</span>
     </div>
     <div class="dk-step final" id="dkbFinalRow">
-      <span class="dk-step-lbl">= Draagkracht / maand</span>
+      <span class="dk-step-lbl" data-i18n="dkStepFinal">= Draagkracht / maand</span>
       <span class="dk-step-val" id="dkbFinal">—</span>
     </div>
     <div class="dk-step dimmed" id="dkb5Row">
-      <span class="dk-step-lbl" id="dkb5Lbl">SF35 €5-drempelregel</span>
+      <span class="dk-step-lbl" id="dkb5Lbl" data-i18n="dkStep5">SF35 €5-drempelregel</span>
       <span class="dk-step-val" id="dkb5Val">—</span>
     </div>
 
     <details class="dk-disclosure">
-      <summary>Wat is de drempel?</summary>
-      <p>De drempel (2026: €26.819,42) is het inkomen dat je altijd voor jezelf houdt — de overheid stelt dit jaarlijks vast op het sociaal minimum. DUO kijkt naar je inkomen van 2 jaar geleden.</p>
+      <summary data-i18n="dkDiscQ">Wat is de drempel?</summary>
+      <p data-i18n="dkDiscA">De drempel (2026: €26.819,42) is het inkomen dat je altijd voor jezelf houdt — de overheid stelt dit jaarlijks vast op het sociaal minimum. DUO kijkt naar je inkomen van 2 jaar geleden.</p>
     </details>
   </div>
 
@@ -953,16 +1125,16 @@ input[type="range"]::-moz-range-thumb {
   <div class="stats">
     <div class="stat-box">
       <div class="stat-val" id="statRente">—</div>
-      <div class="stat-lbl">Rente / maand</div>
+      <div class="stat-lbl" data-i18n="statRenteLbl">Rente / maand</div>
     </div>
     <div class="stat-box">
       <div class="stat-val" id="statGroei">—</div>
-      <div class="stat-lbl">Schuldgroei / mnd</div>
+      <div class="stat-lbl" data-i18n="statGroeiLbl">Schuldgroei / mnd</div>
       <div class="stat-sub" id="statGroeiSub"></div>
     </div>
     <div class="stat-box">
       <div class="stat-val" id="statEtf">—</div>
-      <div class="stat-lbl">ETF-ruimte / mnd</div>
+      <div class="stat-lbl" data-i18n="statEtfLbl">ETF-ruimte / mnd</div>
     </div>
     <div class="stat-box">
       <div class="stat-val" id="statEind">—</div>
@@ -972,20 +1144,26 @@ input[type="range"]::-moz-range-thumb {
   </div>
 </div>
 
+<!-- ══ CARD: SMART SIGNALS ══ -->
+<div class="card" id="signalsCard">
+  <div class="lbl" style="margin-bottom:0.7rem" data-i18n="signalsTitle">Persoonlijke signalen</div>
+  <div id="signals"></div>
+</div>
+
 <!-- ══ CARD 3: CHARTS ══ -->
 <div class="card">
   <div class="tabs-wrap">
     <div class="tabs" id="tabsContainer">
       <div class="tabs-track" id="tabsTrack"></div>
-      <button class="tab-btn active" data-tab="curve">Betalingscurve</button>
-      <button class="tab-btn" data-tab="debt">Schuld t/m 2060</button>
-      <button class="tab-btn" data-tab="scenario">Scenario 2055</button>
+      <button class="tab-btn active" data-tab="curve" data-i18n="tabCurve">Betalingscurve</button>
+      <button class="tab-btn" data-tab="debt" data-i18n="tabDebt">Schuld t/m 2060</button>
+      <button class="tab-btn" data-tab="scenario" data-i18n="tabScenario">Scenario 2055</button>
     </div>
   </div>
 
   <!-- Tab 1: Payment curve -->
   <div class="tab-pane active" id="pane-curve">
-    <p class="chart-desc">
+    <p class="chart-desc" data-i18n="curveDesc">
       Maandbedrag per inkomensniveau. Zwart = wat je betaalt (laagste van twee). Blauw gestippeld = draagkracht. Amber gestippeld = wettelijk. Verticale lijn = jouw inkomen.
     </p>
     <div class="chart-wrap"><canvas id="chartCurve"></canvas></div>
@@ -994,37 +1172,45 @@ input[type="range"]::-moz-range-thumb {
 
   <!-- Tab 2: Debt trajectory -->
   <div class="tab-pane" id="pane-debt">
-    <p class="chart-desc">
-      Schuldontwikkeling over 35 jaar. Blauw = minimale betalingen (kwijtschelding 2060). Paars = inkomen ×1,75. Groen = altijd wettelijk betalen. Amber = ETF-scenariolijn (aanname: je belegt het vrijgekomen bedrag @ 7%/jr bruto).
+    <p class="chart-desc" data-i18n="debtDesc">
+      Schuldontwikkeling over 35 jaar. Blauw = minimale betalingen (kwijtschelding 2060). Paars = inkomen ×1,75. Groen = altijd wettelijk betalen. Amber = ETF-scenariolijn (aanname: je belegt het vrijgekomen bedrag bruto).
     </p>
     <div class="chart-wrap"><canvas id="chartDebt"></canvas></div>
     <div class="insight amber" id="debtInsight"></div>
     <div class="debt-summary">
       <div class="debt-sum red">
         <div class="val" id="sumKwit">—</div>
-        <div class="lbl">Kwijtgescholden 2060</div>
-        <div class="sub">Automatisch afgeschreven</div>
+        <div class="lbl" data-i18n="sumKwitLbl">Kwijtgescholden</div>
+        <div class="sub" id="sumKwitSub">Automatisch afgeschreven</div>
       </div>
       <div class="debt-sum blue">
         <div class="val" id="sumPaid">—</div>
-        <div class="lbl">Totaal betaald</div>
-        <div class="sub">In 35 jaar aan DUO</div>
+        <div class="lbl" data-i18n="sumPaidLbl">Totaal betaald</div>
+        <div class="sub" data-i18n="sumPaidSub">Aan DUO over de looptijd</div>
       </div>
       <div class="debt-sum green">
         <div class="val" id="sumEtf">—</div>
-        <div class="lbl">ETF-portfolio 2060</div>
-        <div class="sub">Vrijgekomen bedrag @ 7%/jr</div>
+        <div class="lbl" data-i18n="sumEtfLbl">ETF-portfolio</div>
+        <div class="sub" id="sumEtfSub">Vrijgekomen bedrag belegd</div>
       </div>
     </div>
     <div class="note" id="etfNote">
-      ETF-portfolio = maandelijks het vrijgekomen bedrag (wettelijk − draagkracht) @ 7%/jaar compound.
+      ETF-portfolio = maandelijks het vrijgekomen bedrag (wettelijk − draagkracht) belegd, compound.
     </div>
+
+    <!-- Return sensitivity 3/5/7% + inflation real values -->
+    <div class="sens-block">
+      <div class="sa-title" data-i18n="sensTitle">Rendement-gevoeligheid &amp; koopkracht</div>
+      <table class="sa-cmp" id="sensTable"></table>
+      <p class="note" id="sensNote"></p>
+    </div>
+
     <div class="strat-analysis" id="stratAnalysis"></div>
   </div>
 
   <!-- Tab 3: Scenario 2055 -->
   <div class="tab-pane" id="pane-scenario">
-    <p class="chart-desc">
+    <p class="chart-desc" data-i18n="scenarioDesc">
       Betalingen in de laatste 5 jaar vóór kwijtschelding (2055–2060) bij verschillende inkomens, geschat op basis van de gesimuleerde schuldstand. Groen = dichtst bij huidig inkomen.
     </p>
     <div class="table-scroll">
@@ -1038,9 +1224,367 @@ input[type="range"]::-moz-range-thumb {
 
 <script>
 // ─────────────────────────────────────────────────────
+//  I18N  (bilingual NL / EN — NL default, persisted)
+// ─────────────────────────────────────────────────────
+let LANG = (localStorage.getItem('sf35lang') === 'en') ? 'en' : 'nl';
+
+const I18N = {
+  nl: {
+    // ── header / intro
+    appTitle: 'DUO SF35 Studieschuld Calculator',
+    appSubtitle: 'Bereken je maandelijkse verplichting, schuldontwikkeling en strategie · voor iedereen met een SF35-lening (leenstelsel, na 2015)',
+    introP1: 'Deze calculator helpt je begrijpen hoeveel je maandelijks aan DUO betaalt, hoe je schuld zich ontwikkelt over 35 jaar, en wat de strategie "minimaal betalen + investeren" concreet oplevert.',
+    introP2: '<strong>Vul in:</strong> je bruto jaarinkomen (slider) en je eigen schuldgegevens via <em>Pas schuld, rente, looptijd aan</em>. Alle waarden vind je in <a href="https://mijn.duo.nl" target="_blank" style="color:var(--blue)">Mijn DUO</a>.',
+    introQ1: 'Wat is het SF35 leenstelsel?',
+    introA1a: 'SF35 (ook wel "leenstelsel") is het studieleningstelsel voor studenten die <strong>na 1 september 2015</strong> zijn begonnen met studeren in het hoger onderwijs of mbo-4. Studieschuld wordt terugbetaald over maximaal 35 jaar, afhankelijk van je inkomen.',
+    introA1b: '<strong>Kernregels:</strong> je betaalt 4% van het inkomen boven de drempel (€26.819 in 2026), maar nooit meer dan het wettelijk maandbedrag (de annuïteit). Als draagkracht ≤ €5/mnd, betaal je niets. Na 35 jaar wordt het resterende saldo automatisch kwijtgescholden.',
+    introA1c: '<strong>Rente:</strong> vastgesteld voor 5 jaar, gebaseerd op het gemiddelde van de 5-jaars staatsobligaties (okt–sep). De rente voor de aflosperiode telt vanaf het begin van de <em>aanloopfase</em> (het jaar na het stoppen van de studiefinanciering).',
+    introSrc: 'Bronnen: <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" style="color:var(--blue)">DUO Terugbetalen</a> · <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" style="color:var(--blue)">WSF 2000</a>',
+    introQ2: 'SF35 rentepercentages per jaar',
+    rHdrYear: 'Jaar', rHdrSf35: 'SF35', rHdrNote: 'Toelichting',
+    rNoteLow: 'Historisch laag', rNoteStart: '5-jaarsperiode start', rNoteCur: 'Huidig gepubliceerd tarief',
+    rExpl: 'Let op: de rente voor jouw lening is vergrendeld voor 5 jaar vanaf de start van jouw aanloopfase. Vul hieronder in wanneer jouw aanloopfase begon om de vergrendeling correct te berekenen.',
+    rExplLink: '→ DUO renteoverzicht',
+    // ── inputs
+    incomeLabel: 'Bruto jaarinkomen',
+    tgPartner: 'Ik heb een fiscaal partner',
+    tgAbroad: 'Ik woon in het buitenland',
+    lblPartnerInk: 'Bruto jaarinkomen partner (€)',
+    notePartner: '<strong>Let op:</strong> DUO erkent een partner pas bij huwelijk, geregistreerd partnerschap, notarieel samenlevingscontract, gezamenlijk kind, of gezamenlijk woningbezit. <strong>Hetzelfde adres alleen is niet voldoende.</strong> Bij een erkend partnerschap telt het partnerinkomen mee en geldt de hogere drempel (€38.351).',
+    noteAbroad: '<strong>Buitenlands inkomen:</strong> DUO haalt dit niet automatisch op. Geef je bruto jaarinkomen elk jaar zélf door via Mijn DUO, vóór 1 januari van het betaaljaar — anders loopt je oude (mogelijk te hoge) maandbedrag door.',
+    advSchuld: 'Jouw schuldgegevens invullen (schuld, rente, looptijd)',
+    lblDrempel: 'Drempel (€)',
+    lblHuidigInk: 'Huidig inkomen nu (€/jr)',
+    lblDuoBill: 'Wat DUO nu int (€/mnd)',
+    lblAanloop: 'Aanloopfase gestart (jaar) <span style="font-weight:400;color:var(--text-3)">→ voor rentelock-berekening</span>',
+    noteAanloop: 'De aanloopfase begint op 1 januari van het jaar nadat je studiefinanciering stopte. De rente is vergrendeld voor 5 jaar vanaf dat moment.',
+    advBeleg: 'Beleggings- & belastingaannames (rendement, inflatie, box 3)',
+    lblReturn: 'Beleggingsrendement (%/jr)',
+    lblInflatie: 'Inflatie (%/jr)',
+    lblOtherWealth: 'Overig box-3 vermogen (€)',
+    lblBox3: 'Box-3 heffing meerekenen',
+    noteBox3: 'Box-3 aanname (2026): vrijstelling €57.684 p.p., forfaitair rendement 6,04%, tarief 36% → effectief ~2,17%/jr boven de vrijstelling. Het nieuwe box-3 stelsel op basis van werkelijk rendement wordt ~2028 verwacht — dit is een aanname.',
+    // ── result card
+    heroLbl: 'Te betalen / maand',
+    compDk: 'Draagkracht',
+    compWm: 'Wettelijk maandbedrag',
+    dkTitle: 'Draagkracht — live berekening',
+    dkStepInk: 'Bruto jaarinkomen',
+    dkStepDrempel: '− Drempel',
+    dkStepOver: '= Inkomen boven drempel',
+    dkStepRate: '× 4% / jaar',
+    dkStepDiv: '÷ 12',
+    dkStepFinal: '= Draagkracht / maand',
+    dkStep5: 'SF35 €5-drempelregel',
+    dkDiscQ: 'Wat is de drempel?',
+    dkDiscA: 'De drempel (2026: €26.819,42) is het inkomen dat je altijd voor jezelf houdt — de overheid stelt dit jaarlijks vast op het sociaal minimum. DUO kijkt naar je inkomen van 2 jaar geleden.',
+    statRenteLbl: 'Rente / maand',
+    statGroeiLbl: 'Schuldgroei / mnd',
+    statEtfLbl: 'ETF-ruimte / mnd',
+    signalsTitle: 'Persoonlijke signalen',
+    // ── tabs + chart descriptions
+    tabCurve: 'Betalingscurve',
+    tabDebt: 'Schuld t/m 2060',
+    tabScenario: 'Scenario 2055',
+    curveDesc: 'Maandbedrag per inkomensniveau. Zwart = wat je betaalt (laagste van twee). Blauw gestippeld = draagkracht. Amber gestippeld = wettelijk. Verticale lijn = jouw inkomen.',
+    debtDesc: 'Schuldontwikkeling over 35 jaar. Blauw = minimale betalingen (kwijtschelding 2060). Paars = inkomen ×1,75. Groen = altijd wettelijk betalen. Amber = ETF-scenariolijn (aanname: je belegt het vrijgekomen bedrag bruto).',
+    scenarioDesc: 'Betalingen in de laatste 5 jaar vóór kwijtschelding (2055–2060) bij verschillende inkomens, geschat op basis van de gesimuleerde schuldstand. Groen = dichtst bij huidig inkomen.',
+    sumKwitLbl: 'Kwijtgescholden',
+    sumKwitSub: 'Automatisch afgeschreven',
+    sumPaidLbl: 'Totaal betaald',
+    sumPaidSub: 'Aan DUO over de looptijd',
+    sumEtfLbl: 'ETF-portfolio',
+    sumEtfSub: 'Vrijgekomen bedrag belegd',
+    etfNoteStatic: 'ETF-portfolio = maandelijks het vrijgekomen bedrag (wettelijk − draagkracht) belegd, compound.',
+    sensTitle: "Rendement-gevoeligheid & koopkracht",
+    inTodayEuro: "in euro's van nu",
+    sensRet: 'Rendement', sensNom: 'ETF nominaal', sensReal: "In euro's van nu",
+    // ── footer
+    footerHdr: 'Bronnen en disclaimer',
+    footerDisclaimer: 'Deze calculator is uitsluitend bedoeld als rekenmodel voor inzicht en scenario-analyse. Het vormt geen juridisch of financieel advies. Controleer altijd via Mijn DUO voor je actuele schuld, rente en maandbedrag. De toekomstige rente na de huidige vergrendelingsperiode is onbekend; de calculator gebruikt 2,33% (gepubliceerd SF35 tarief 2026) als scenario-aanname.',
+    footerOpen: 'Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>',
+
+    // ── dynamic (functions)
+    sliderTick: p => `drempel ${p.v}`,
+    tagZero: () => 'geen betalingsverplichting',
+    tagDk: () => 'draagkrachtbedrag',
+    tagWm: () => 'wettelijk maandbedrag',
+    fmtDkUnder: () => 'inkomen ≤ drempel → €0',
+    fmtDkFloor: p => `4% formule → ${p.dk} ≤ €5 → €0`,
+    fmtDkNorm: p => `4% × (${p.ink} − ${p.drempel}) ÷ 12`,
+    fmtWm: p => `annuïteit ${p.schuld} @ ${p.rente}% / ${p.jaren} jr`,
+    stratZeroUnder: p => `<strong>Geen verplichting.</strong> Jouw inkomen ligt onder de drempel van ${p.drempel}, dus draagkracht = €0. Je hoeft DUO dit jaar niets te betalen. Overweeg pauze-maanden te sparen voor jaren met hóger inkomen.`,
+    stratZeroFloor: p => `<strong>Geen verplichting (SF35 €5-drempelregel).</strong> Je draagkracht is ${p.dkRaw}/mnd — positief, maar DUO vereist alleen betaling als draagkracht <em>meer</em> dan €5/mnd bedraagt (Art. 6.10 lid 3 WSF 2000). Effectief betaal je €0. Spaar pauze-maanden voor jaren met hóger inkomen.`,
+    stratDk: p => `<strong>Minimale verplichting: ${p.dk}/mnd.</strong> Het verschil — ${p.etfRoom}/mnd — blijft vrij voor ETF-investering. Belegd @ ${p.pct}%/jaar compound groeit dat over 34 jaar naar een substantieel vermogen. In 2060 wordt de resterende schuld automatisch kwijtgescholden.`,
+    stratWm: p => `<strong>Wettelijk maandbedrag geldt: ${p.wm}/mnd.</strong> Bij dit inkomen zou de draagkracht (${p.dk}) hoger zijn dan het wettelijk bedrag — je betaalt nooit méér dan het wettelijk bedrag. Er is geen ETF-ruimte op dit inkomensniveau.`,
+    groeiUp: p => `Schuld groeit ${p.g}/mnd`,
+    groeiDown: p => `Schuld daalt ${p.g}/mnd`,
+    eindLbl: p => `Schuld na ${p.jaren} jr`,
+    eindPaid: () => '→ volledig afgelost',
+    eindKwit: () => '→ kwijtgescholden',
+    dkbInkVal: p => `${p.ink}/jaar`,
+    dkbDrempelVal: p => `− ${p.drempel}/jaar`,
+    dkbOverUnder: () => '= Inkomen ≤ drempel',
+    dkbOverZero: () => '→ €0 over',
+    dkbOverNorm: () => '= Inkomen boven drempel',
+    dkbOverVal: p => `${p.over}/jaar`,
+    dkbYearVal: p => `${p.jaarDk}/jaar`,
+    dkbDivVal: p => `${p.jaarDk} ÷ 12`,
+    dkbFinalZero: () => '€0/mnd',
+    dkbFinalVal: p => `${p.dkRaw}/mnd`,
+    dkb5Floor: p => `${p.dkRaw} ≤ €5 → effectief €0`,
+    dkb5Pass: () => '> €5 — betaling vereist',
+    sumKwitSubReal: p => `Automatisch afgeschreven · ${p.real} in euro's van nu`,
+    sumEtfSubReal: p => `Vrijgekomen bedrag belegd · ${p.real} in euro's van nu`,
+    sensNotePre: p => `Jouw gekozen aanname: <strong>${p.pct}%</strong> bruto rendement. `,
+    sensBox3On: p => `Box 3-heffing (~${p.eff}%/jr boven ${p.allow} vrijstelling) is verrekend.`,
+    sensBox3Off: () => 'Box 3-heffing staat uit — zet hem aan bij de aannames voor een realistischer netto-beeld.',
+    etfNoteDyn: p => `ETF-aanname: ~${p.contrib}/mnd (= wettelijk − draagkracht bij huidig inkomen) @ ${p.pct}%/jr compound${p.box3 ? ', na box 3-heffing' : ''}. Dit verandert als de rente na 2027 wijzigt.`,
+    // signals
+    sigZeroReasonUnder: p => `je ${p.partner ? 'gezamenlijk ' : ''}inkomen (${p.ink}) ligt onder de drempel (${p.drempel})`,
+    sigZeroReasonFloor: p => `je draagkracht (${p.dkRaw}/mnd) is ≤ €5 — onder de SF35-drempelregel (Art. 6.10 lid 3 WSF 2000)`,
+    sigZeroBody: p => `<strong>Je hoeft DUO nu niets te betalen.</strong> Op basis van je inkomen is je verplichting €0: ${p.reason}.`,
+    sigZeroAct: () => 'Tip: spaar je aflosvrije maanden op voor jaren met een hóger inkomen.',
+    sigOverBody: p => `<strong>Je betaalt mogelijk ${p.diff}/mnd teveel.</strong> DUO int ${p.bill}/mnd, maar op basis van je inkomen is je draagkracht ${p.pay}.`,
+    sigOverAct: () => 'Actie: kijk in Mijn DUO welk peiljaarinkomen DUO gebruikt. Klopt het niet (bijv. buitenlands inkomen nog niet doorgegeven)? Geef je inkomen door en vraag een herberekening — mogelijk met terugwerkende kracht.',
+    sigUnderBody: p => `<strong>Je betaalt minder dan je draagkracht.</strong> DUO int ${p.bill}/mnd terwijl je draagkracht ${p.pay}/mnd is. Controleer of dit klopt — een onbetaald verschil kan een achterstand worden, en achterstallige bedragen worden níet kwijtgescholden.`,
+    sigPeilWhyMin: p => `je huidige inkomen (${p.huidig}) ligt onder de minimumdrempel van ${p.min}`,
+    sigPeilWhyDrop: p => `je huidige inkomen (${p.huidig}) ligt ~${p.pct}% onder je peiljaarinkomen (${p.ink})`,
+    sigPeilBody: p => `<strong>Je komt mogelijk in aanmerking voor peiljaarverlegging.</strong> ${p.why}. DUO herberekent je maandbedrag dan op je actuele inkomen i.p.v. dat van 2 jaar geleden.`,
+    sigPeilAct: () => 'Aanvragen: Mijn DUO → Minder of niets aflossen → Peiljaar verleggen. Alleen mogelijk bij een inkomensdáling.',
+    sigNeutralBindDk: () => 'draagkracht',
+    sigNeutralBindWm: () => 'wettelijk maandbedrag',
+    sigNeutralBody: p => `<strong>Niets bijzonders te melden.</strong> Je betaalt ${p.pay}/mnd (${p.bind}). Vul hierboven "wat DUO nu int" en "huidig inkomen nu" in voor controles op te veel betalen en peiljaarverlegging.`,
+    // curve
+    curvePay: () => 'Te betalen (laagste van twee)',
+    curveDk: () => 'Draagkracht (4%-formule)',
+    curveWm: p => `Wettelijk (${p.wm}/mnd)`,
+    curveInsightA: p => `Bij je huidige inkomen (${p.ink}) betaal je <strong>${p.pay}/mnd</strong>. `,
+    curveInsightRoom: p => `Je houdt <strong>${p.room}/mnd</strong> over t.o.v. het wettelijk bedrag — dat is je ETF-ruimte.`,
+    curveInsightNoRoom: () => 'Je betaalt het wettelijk bedrag; draagkracht > wettelijk.',
+    curveInsightCross: p => ` Draagkracht = wettelijk bij ~${p.cross} jaarinkomen.`,
+    // debt chart
+    debtMin: p => `Schuld — min. betalen (${p.ink}/jr)`,
+    debtX175: p => `Schuld — inkomen ×1,75 (${p.ink}/jr)`,
+    debtAlways: () => 'Schuld — altijd wettelijk betalen',
+    debtEtf: p => `ETF-portfolio @ ${p.pct}%/jr (${p.ink}/jr inkomen)`,
+    debtAxisYear: () => 'Jaar',
+    debtInsight: p => `<strong>Wat levert de strategie op?</strong> Je betaalt in 35 jaar slechts <strong>${p.paid}</strong> aan DUO. De resterende schuld (<strong>${p.debt}</strong>) wordt in 2060 kwijtgescholden. Ondertussen groeit je ETF-portfolio naar <strong>${p.etf}</strong>.`,
+    saTitle: () => 'Strategie-analyse',
+    saZoneGrow: () => 'Schuld groeit',
+    saZoneGrowRange: p => `ink &lt; ${p.be} (scenario: 2,33% na 2028)`,
+    saZoneGrowWarn: () => '⚠ Nu krimpt je schuld nog (bij 0,46%), maar na de renteherziening in 2028 groeit hij weer bij dit inkomen.',
+    saZoneShrink: () => 'Schuld krimpt — deels kwijtgescholden in 2060',
+    saZoneShrinkRange: p => `${p.be} – ${p.full}`,
+    saZoneFull: () => 'Volledig afgelost — geen kwijtschelding nodig',
+    saZoneFullRange: p => `ink ≥ ${p.full}`,
+    saYou: () => 'jij',
+    saCmpStrat: () => 'Strategie', saCmpPaid: () => 'Betaald DUO', saCmpKwit: () => 'Kwijtgescholden', saCmpEtf: () => 'ETF 2060*',
+    saRowA: () => 'A — min betalen', saRowB: () => 'B — altijd wettelijk', saRowAdv: () => 'Voordeel A',
+    saAdvPaid: p => `+${p.v} minder`,
+    saRiskTitle: () => 'Risico: wet verandert vóór 2060.',
+    saRiskResilient: p => `Zelfs dan: je ETF (${p.etf}) minus de dan nog openstaande schuld (${p.debt}) = <strong>+${p.net} netto voordeel</strong> t.o.v. Strategie B. De kwijtschelding is een bonus, niet de fundering van de strategie.`,
+    saRiskNot: p => `Let op: je ETF (${p.etf}) dekt de restschuld (${p.debt}) niet volledig. Overweeg een hogere maandelijkse ETF-inleg, of een hogere inkomensdoelstelling.`,
+    // scenario table
+    scHdrInk: () => 'Inkomen / jaar', scHdrDk: () => 'Draagkracht', scHdrWm: () => 'Wettelijk',
+    scHdrPay: () => 'Je betaalt', scHdrBind: () => 'Bindend', scHdrKwit: () => 'Kwijtgescholden',
+    scRowUnemployed: () => 'Werkloos / laag inkomen',
+    scOmslag: () => 'omslagpunt', scGelijk: () => 'gelijk', scFullPaid: () => '€0 — volledig betaald',
+    scBindDk: () => 'draagkracht', scBindWm: () => 'wettelijk',
+    scNote: p => `Geschatte schuld in 2055: <strong>${p.debt}</strong> · rente: ${p.rente}% · drempel geïndexeerd naar ~${p.drempel} (minimumloon +2%/jr). "Kwijtgescholden" = restschuld na 5 jaar betalingen die per jan 2060 verdwijnt. Omslagpunt = inkomen waarbij draagkracht precies het wettelijk maandbedrag dekt.`,
+  },
+  en: {
+    // ── header / intro
+    appTitle: 'DUO SF35 Student Loan Calculator',
+    appSubtitle: 'Calculate your monthly obligation, debt trajectory and strategy · for anyone with an SF35 loan (Dutch "leenstelsel", post-2015)',
+    introP1: 'This calculator helps you understand how much you pay DUO each month, how your debt evolves over 35 years, and what the "pay the minimum + invest" strategy concretely yields.',
+    introP2: '<strong>Enter:</strong> your gross annual income (slider) and your own loan details via <em>Adjust debt, rate, term</em>. You can find all values in <a href="https://mijn.duo.nl" target="_blank" style="color:var(--blue)">Mijn DUO</a>.',
+    introQ1: 'What is the SF35 loan system?',
+    introA1a: 'SF35 (the Dutch "leenstelsel") is the student loan system for students who started in higher education or MBO-4 <strong>after 1 September 2015</strong>. Student debt is repaid over a maximum of 35 years, depending on your income.',
+    introA1b: '<strong>Core rules:</strong> you pay 4% of income above the threshold (€26,819 in 2026), but never more than the statutory monthly amount (the annuity). If your capacity-to-pay ≤ €5/mo, you pay nothing. After 35 years the remaining balance is automatically written off.',
+    introA1c: '<strong>Interest:</strong> fixed for 5 years, based on the average of 5-year government bonds (Oct–Sep). The repayment-phase rate counts from the start of the <em>run-up phase</em> (the year after your student finance stopped).',
+    introSrc: 'Sources: <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" style="color:var(--blue)">DUO Repayment</a> · <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" style="color:var(--blue)">WSF 2000</a>',
+    introQ2: 'SF35 interest rates by year',
+    rHdrYear: 'Year', rHdrSf35: 'SF35', rHdrNote: 'Note',
+    rNoteLow: 'Historic low', rNoteStart: '5-year period starts', rNoteCur: 'Current published rate',
+    rExpl: 'Note: the rate for your loan is locked for 5 years from the start of your run-up phase. Enter below when your run-up phase began to compute the lock correctly.',
+    rExplLink: '→ DUO rate overview',
+    // ── inputs
+    incomeLabel: 'Gross annual income',
+    tgPartner: 'I have a fiscal partner',
+    tgAbroad: 'I live abroad',
+    lblPartnerInk: "Partner's gross annual income (€)",
+    notePartner: '<strong>Note:</strong> DUO only recognises a partner via marriage, registered partnership, a notarial cohabitation contract, a shared child, or jointly owned property. <strong>The same address alone is not sufficient.</strong> With a recognised partnership the partner income counts and the higher threshold (€38,351) applies.',
+    noteAbroad: '<strong>Foreign income:</strong> DUO does not retrieve this automatically. Report your gross annual income yourself each year via Mijn DUO, before 1 January of the payment year — otherwise your old (possibly too high) monthly amount keeps running.',
+    advSchuld: 'Enter your loan details (debt, rate, term)',
+    lblDrempel: 'Threshold (€)',
+    lblHuidigInk: 'Current income now (€/yr)',
+    lblDuoBill: 'What DUO charges now (€/mo)',
+    lblAanloop: 'Run-up phase started (year) <span style="font-weight:400;color:var(--text-3)">→ for rate-lock calculation</span>',
+    noteAanloop: 'The run-up phase begins on 1 January of the year after your student finance stopped. The rate is locked for 5 years from that moment.',
+    advBeleg: 'Investment & tax assumptions (return, inflation, box 3)',
+    lblReturn: 'Investment return (%/yr)',
+    lblInflatie: 'Inflation (%/yr)',
+    lblOtherWealth: 'Other box-3 wealth (€)',
+    lblBox3: 'Include box-3 wealth tax',
+    noteBox3: 'Box-3 assumption (2026): €57,684 allowance p.p., deemed return 6.04%, rate 36% → effectively ~2.17%/yr drag above the allowance. The new box-3 system based on actual returns is expected ~2028 — this is an assumption.',
+    // ── result card
+    heroLbl: 'To pay / month',
+    compDk: 'Capacity to pay',
+    compWm: 'Statutory monthly amount',
+    dkTitle: 'Capacity to pay — live calculation',
+    dkStepInk: 'Gross annual income',
+    dkStepDrempel: '− Threshold',
+    dkStepOver: '= Income above threshold',
+    dkStepRate: '× 4% / year',
+    dkStepDiv: '÷ 12',
+    dkStepFinal: '= Capacity to pay / month',
+    dkStep5: 'SF35 €5 floor rule',
+    dkDiscQ: 'What is the threshold?',
+    dkDiscA: 'The threshold (2026: €26,819.42) is the income you always keep for yourself — the government sets it annually at the social minimum. DUO looks at your income from 2 years ago.',
+    statRenteLbl: 'Interest / month',
+    statGroeiLbl: 'Debt growth / mo',
+    statEtfLbl: 'ETF room / mo',
+    signalsTitle: 'Personal signals',
+    // ── tabs + chart descriptions
+    tabCurve: 'Payment curve',
+    tabDebt: 'Debt to 2060',
+    tabScenario: 'Scenario 2055',
+    curveDesc: 'Monthly amount per income level. Black = what you pay (lower of the two). Blue dashed = capacity to pay. Amber dashed = statutory. Vertical line = your income.',
+    debtDesc: 'Debt trajectory over 35 years. Blue = minimum payments (written off 2060). Purple = income ×1.75. Green = always pay statutory. Amber = ETF scenario line (assumption: you invest the freed-up amount, gross).',
+    scenarioDesc: 'Payments in the final 5 years before write-off (2055–2060) at different incomes, estimated from the simulated debt balance. Green = closest to your current income.',
+    sumKwitLbl: 'Written off',
+    sumKwitSub: 'Automatically cancelled',
+    sumPaidLbl: 'Total paid',
+    sumPaidSub: 'To DUO over the term',
+    sumEtfLbl: 'ETF portfolio',
+    sumEtfSub: 'Freed-up amount invested',
+    etfNoteStatic: 'ETF portfolio = the freed-up amount (statutory − capacity) invested monthly, compounded.',
+    sensTitle: 'Return sensitivity & purchasing power',
+    inTodayEuro: "in today's euros",
+    sensRet: 'Return', sensNom: 'ETF nominal', sensReal: "In today's euros",
+    // ── footer
+    footerHdr: 'Sources and disclaimer',
+    footerDisclaimer: 'This calculator is intended solely as a model for insight and scenario analysis. It does not constitute legal or financial advice. Always check Mijn DUO for your actual debt, rate and monthly amount. The future rate after the current lock period is unknown; the calculator uses 2.33% (the published SF35 rate for 2026) as a scenario assumption.',
+    footerOpen: 'Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>',
+
+    // ── dynamic (functions)
+    sliderTick: p => `threshold ${p.v}`,
+    tagZero: () => 'no payment obligation',
+    tagDk: () => 'capacity-based amount',
+    tagWm: () => 'statutory monthly amount',
+    fmtDkUnder: () => 'income ≤ threshold → €0',
+    fmtDkFloor: p => `4% formula → ${p.dk} ≤ €5 → €0`,
+    fmtDkNorm: p => `4% × (${p.ink} − ${p.drempel}) ÷ 12`,
+    fmtWm: p => `annuity ${p.schuld} @ ${p.rente}% / ${p.jaren} yr`,
+    stratZeroUnder: p => `<strong>No obligation.</strong> Your income is below the threshold of ${p.drempel}, so capacity to pay = €0. You owe DUO nothing this year. Consider saving pause months for higher-income years.`,
+    stratZeroFloor: p => `<strong>No obligation (SF35 €5 floor rule).</strong> Your capacity to pay is ${p.dkRaw}/mo — positive, but DUO only requires payment when capacity exceeds €5/mo (Art. 6.10 §3 WSF 2000). Effectively you pay €0. Save pause months for higher-income years.`,
+    stratDk: p => `<strong>Minimum obligation: ${p.dk}/mo.</strong> The difference — ${p.etfRoom}/mo — stays free for ETF investing. Invested at ${p.pct}%/yr compounded, that grows into substantial wealth over 34 years. In 2060 the remaining debt is automatically written off.`,
+    stratWm: p => `<strong>Statutory monthly amount applies: ${p.wm}/mo.</strong> At this income the capacity to pay (${p.dk}) would exceed the statutory amount — you never pay more than statutory. There is no ETF room at this income level.`,
+    groeiUp: p => `Debt grows ${p.g}/mo`,
+    groeiDown: p => `Debt shrinks ${p.g}/mo`,
+    eindLbl: p => `Debt after ${p.jaren} yr`,
+    eindPaid: () => '→ fully repaid',
+    eindKwit: () => '→ written off',
+    dkbInkVal: p => `${p.ink}/year`,
+    dkbDrempelVal: p => `− ${p.drempel}/year`,
+    dkbOverUnder: () => '= Income ≤ threshold',
+    dkbOverZero: () => '→ €0 over',
+    dkbOverNorm: () => '= Income above threshold',
+    dkbOverVal: p => `${p.over}/year`,
+    dkbYearVal: p => `${p.jaarDk}/year`,
+    dkbDivVal: p => `${p.jaarDk} ÷ 12`,
+    dkbFinalZero: () => '€0/mo',
+    dkbFinalVal: p => `${p.dkRaw}/mo`,
+    dkb5Floor: p => `${p.dkRaw} ≤ €5 → effectively €0`,
+    dkb5Pass: () => '> €5 — payment required',
+    sumKwitSubReal: p => `Automatically cancelled · ${p.real} in today's euros`,
+    sumEtfSubReal: p => `Freed-up amount invested · ${p.real} in today's euros`,
+    sensNotePre: p => `Your chosen assumption: <strong>${p.pct}%</strong> gross return. `,
+    sensBox3On: p => `Box-3 tax (~${p.eff}%/yr above the ${p.allow} allowance) has been accounted for.`,
+    sensBox3Off: () => 'Box-3 tax is off — enable it under assumptions for a more realistic net picture.',
+    etfNoteDyn: p => `ETF assumption: ~${p.contrib}/mo (= statutory − capacity at current income) @ ${p.pct}%/yr compounded${p.box3 ? ', after box-3 tax' : ''}. This changes if the rate shifts after 2027.`,
+    // signals
+    sigZeroReasonUnder: p => `your ${p.partner ? 'combined ' : ''}income (${p.ink}) is below the threshold (${p.drempel})`,
+    sigZeroReasonFloor: p => `your capacity to pay (${p.dkRaw}/mo) is ≤ €5 — under the SF35 floor rule (Art. 6.10 §3 WSF 2000)`,
+    sigZeroBody: p => `<strong>You owe DUO nothing right now.</strong> Based on your income your obligation is €0: ${p.reason}.`,
+    sigZeroAct: () => 'Tip: save your payment-free months for higher-income years.',
+    sigOverBody: p => `<strong>You may be overpaying by ${p.diff}/mo.</strong> DUO charges ${p.bill}/mo, but based on your income your capacity to pay is ${p.pay}.`,
+    sigOverAct: () => 'Action: check in Mijn DUO which reference-year income DUO uses. If it is wrong (e.g. foreign income not yet reported), report your income and request a recalculation — possibly retroactively.',
+    sigUnderBody: p => `<strong>You pay less than your capacity.</strong> DUO charges ${p.bill}/mo while your capacity is ${p.pay}/mo. Check whether this is correct — an unpaid difference can become arrears, and arrears are not written off.`,
+    sigPeilWhyMin: p => `your current income (${p.huidig}) is below the minimum threshold of ${p.min}`,
+    sigPeilWhyDrop: p => `your current income (${p.huidig}) is ~${p.pct}% below your reference-year income (${p.ink})`,
+    sigPeilBody: p => `<strong>You may qualify for reference-year adjustment (peiljaarverlegging).</strong> ${p.why}. DUO then recalculates your monthly amount on your current income instead of 2 years ago.`,
+    sigPeilAct: () => 'Apply: Mijn DUO → Pay less or nothing → Adjust reference year. Only possible when income has dropped.',
+    sigNeutralBindDk: () => 'capacity to pay',
+    sigNeutralBindWm: () => 'statutory monthly amount',
+    sigNeutralBody: p => `<strong>Nothing notable to report.</strong> You pay ${p.pay}/mo (${p.bind}). Fill in "what DUO charges now" and "current income now" above for overpayment and reference-year checks.`,
+    // curve
+    curvePay: () => 'To pay (lower of the two)',
+    curveDk: () => 'Capacity to pay (4% formula)',
+    curveWm: p => `Statutory (${p.wm}/mo)`,
+    curveInsightA: p => `At your current income (${p.ink}) you pay <strong>${p.pay}/mo</strong>. `,
+    curveInsightRoom: p => `You keep <strong>${p.room}/mo</strong> versus the statutory amount — that is your ETF room.`,
+    curveInsightNoRoom: () => 'You pay the statutory amount; capacity > statutory.',
+    curveInsightCross: p => ` Capacity = statutory at ~${p.cross} annual income.`,
+    // debt chart
+    debtMin: p => `Debt — min. payments (${p.ink}/yr)`,
+    debtX175: p => `Debt — income ×1.75 (${p.ink}/yr)`,
+    debtAlways: () => 'Debt — always pay statutory',
+    debtEtf: p => `ETF portfolio @ ${p.pct}%/yr (${p.ink}/yr income)`,
+    debtAxisYear: () => 'Year',
+    debtInsight: p => `<strong>What does the strategy yield?</strong> Over 35 years you pay DUO only <strong>${p.paid}</strong>. The remaining debt (<strong>${p.debt}</strong>) is written off in 2060. Meanwhile your ETF portfolio grows to <strong>${p.etf}</strong>.`,
+    saTitle: () => 'Strategy analysis',
+    saZoneGrow: () => 'Debt grows',
+    saZoneGrowRange: p => `inc &lt; ${p.be} (scenario: 2.33% after 2028)`,
+    saZoneGrowWarn: () => '⚠ Your debt still shrinks now (at 0.46%), but after the rate reset in 2028 it grows again at this income.',
+    saZoneShrink: () => 'Debt shrinks — partly written off in 2060',
+    saZoneShrinkRange: p => `${p.be} – ${p.full}`,
+    saZoneFull: () => 'Fully repaid — no write-off needed',
+    saZoneFullRange: p => `inc ≥ ${p.full}`,
+    saYou: () => 'you',
+    saCmpStrat: () => 'Strategy', saCmpPaid: () => 'Paid DUO', saCmpKwit: () => 'Written off', saCmpEtf: () => 'ETF 2060*',
+    saRowA: () => 'A — pay minimum', saRowB: () => 'B — always statutory', saRowAdv: () => 'Advantage A',
+    saAdvPaid: p => `+${p.v} less`,
+    saRiskTitle: () => 'Risk: the law changes before 2060.',
+    saRiskResilient: p => `Even then: your ETF (${p.etf}) minus the still-outstanding debt (${p.debt}) = <strong>+${p.net} net advantage</strong> versus Strategy B. The write-off is a bonus, not the foundation of the strategy.`,
+    saRiskNot: p => `Caution: your ETF (${p.etf}) does not fully cover the residual debt (${p.debt}). Consider a higher monthly ETF contribution, or a higher income target.`,
+    // scenario table
+    scHdrInk: () => 'Income / year', scHdrDk: () => 'Capacity', scHdrWm: () => 'Statutory',
+    scHdrPay: () => 'You pay', scHdrBind: () => 'Binding', scHdrKwit: () => 'Written off',
+    scRowUnemployed: () => 'Unemployed / low income',
+    scOmslag: () => 'crossover', scGelijk: () => 'equal', scFullPaid: () => '€0 — fully paid',
+    scBindDk: () => 'capacity', scBindWm: () => 'statutory',
+    scNote: p => `Estimated debt in 2055: <strong>${p.debt}</strong> · rate: ${p.rente}% · threshold indexed to ~${p.drempel} (minimum wage +2%/yr). "Written off" = residual debt after 5 years of payments that disappears as of Jan 2060. Crossover = income at which capacity exactly covers the statutory monthly amount.`,
+  },
+};
+
+function t(key, p) {
+  const dict = I18N[LANG] || I18N.nl;
+  let v = (key in dict) ? dict[key] : I18N.nl[key];
+  if (typeof v === 'function') return v(p || {});
+  return (v == null) ? key : v;
+}
+
+function applyI18n() {
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+  const tg = document.getElementById('langToggle');
+  if (tg) tg.textContent = (LANG === 'nl') ? 'EN' : 'NL';
+}
+
+function setLang(l) {
+  LANG = (l === 'en') ? 'en' : 'nl';
+  localStorage.setItem('sf35lang', LANG);
+  applyI18n();
+  updateAll();
+}
+
+// ─────────────────────────────────────────────────────
 //  HELPERS
 // ─────────────────────────────────────────────────────
-const fmt   = n => '€' + Math.round(Math.abs(n)).toLocaleString('nl-NL');
+const fmt   = n => '€' + Math.round(Math.abs(n)).toLocaleString(LANG === 'nl' ? 'nl-NL' : 'en-GB');
 const pctOf = (v, max) => Math.min(100, Math.max(0, v / max * 100));
 
 function draagkracht(ink, drempel) {
@@ -1063,13 +1607,43 @@ const POST_LOCK_RATE = 2.33; // scenario assumption — label as such in the UI
 // DUO only charges you if draagkracht EXCEEDS €5/month. At or below €5 → effectively €0.
 const DK_FLOOR = 5;
 
+// ── Box 3 (vermogensrendementsheffing) — 2026 transitional figures ──
+// These are ASSUMPTIONS. A new box-3 system based on actual returns is expected ~2028.
+const BOX3 = {
+  allowance: 57684,    // heffingsvrij vermogen per persoon (2026)
+  forfait:   0.0604,   // forfaitair rendement beleggingen (2024-cijfer)
+  taxRate:   0.36,     // tarief box 3
+  get effRate() { return this.forfait * this.taxRate; } // ≈ 2,17%/jr drag boven vrijstelling
+};
+
+// Live investment/tax assumptions — updated from inputs in inp().
+// Defaults here so simulate() works standalone before Stage B inputs exist.
+const ASSUME = {
+  etfReturn:   0.07,   // bruto jaarrendement beleggingen
+  inflation:   0.02,   // voor reële (koopkracht) weergave
+  box3On:      false,  // pas box-3 heffing toe op portfolio
+  otherWealth: 0,      // overig box-3 vermogen (telt mee voor vrijstelling)
+};
+
+// 2026 thresholds
+const SINGLE_DREMPEL  = 26819.42; // drempel alleenstaand (100% WML)
+const PARTNER_DREMPEL = 38351.77; // drempel met fiscaal partner (143% WML)
+const PEILJAARV_MIN   = 22921.71; // minimumdrempel peiljaarverlegging 2026
+
+// Real (today's euros) value after `years` of inflation
+function realValue(nominal, years) {
+  return nominal / Math.pow(1 + ASSUME.inflation, years);
+}
+
 function getLockEnd() {
   // Lock end = January 1 of (aanloopfase start year + 5)
   const yr = parseInt(document.getElementById('aanloopJaar')?.value || '2023', 10);
   return new Date(yr + 5, 0, 1);
 }
 
-function simulate(ink, schuld0, startRente, totalJaren, drempel) {
+function simulate(ink, schuld0, startRente, totalJaren, drempel, opts = {}) {
+  const etfReturn = opts.etfReturn ?? ASSUME.etfReturn;
+  const box3On    = opts.box3On    ?? ASSUME.box3On;
   let s = schuld0, totalPaid = 0, etfValue = 0;
   const pts    = [s];
   const etfPts = [0];
@@ -1094,13 +1668,25 @@ function simulate(ink, schuld0, startRente, totalJaren, drempel) {
     const interest= s * r / 100 / 12;
     s = s + interest - pay;
     totalPaid  += pay;
-    etfValue    = etfValue * (1 + 0.07/12) + Math.max(0, wm - pay);
+    etfValue    = etfValue * (1 + etfReturn/12) + Math.max(0, wm - pay);
+    // Apply box-3 drag once per year (December) on taxable wealth above the allowance.
+    // Marginal cost of holding the ETF = effRate × the portion of (ETF + other wealth)
+    // that sits above the vrijstelling, capped at the ETF value itself.
+    if (box3On && (m + 1) % 12 === 0) {
+      const taxableTotal = Math.max(0, (etfValue + ASSUME.otherWealth) - BOX3.allowance);
+      const box3Cost     = Math.min(etfValue, taxableTotal) * BOX3.effRate;
+      etfValue = Math.max(0, etfValue - box3Cost);
+    }
     if ((m + 1) % 12 === 0) {
       pts.push(Math.max(0, s));
       etfPts.push(Math.round(etfValue));
     }
   }
-  return { pts, etfPts, finalDebt: Math.max(0, s), totalPaid, etfValue };
+  return {
+    pts, etfPts, finalDebt: Math.max(0, s), totalPaid, etfValue,
+    realFinalDebt: realValue(Math.max(0, s), totalJaren),
+    realEtfValue:  realValue(etfValue, totalJaren),
+  };
 }
 
 // ─────────────────────────────────────────────────────
@@ -1114,14 +1700,39 @@ function destroy(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]
 //  READ INPUTS  (clamped — prevents nonsensical values)
 // ─────────────────────────────────────────────────────
 function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v || 0)); }
+function num(id)     { const e = document.getElementById(id); if (!e) return null; const v = parseFloat(e.value); return isNaN(v) ? null : v; }
+function checked(id) { const e = document.getElementById(id); return !!(e && e.checked); }
+
 function inp() {
+  const ownInk    = clamp(+document.getElementById('inkomen').value, 0, 250000);
+  const partnerOn = checked('partnerOn');
+  const abroadOn  = checked('abroadOn');
+  const partnerInk= partnerOn ? clamp(num('partnerInk') || 0, 0, 500000) : 0;
+  const ink       = ownInk + partnerInk; // toetsingsinkomen (gezamenlijk bij partner)
+  const drempel   = partnerOn
+    ? PARTNER_DREMPEL
+    : clamp(+document.getElementById('drempel').value, 10000, 80000);
+
+  // Current income (for peiljaarverlegging). Blank → assume equal to peiljaar income.
+  const huidigRaw = num('huidigInk');
+  const huidigInk = huidigRaw == null ? ink : clamp(huidigRaw, 0, 500000);
+  const duoBill   = num('duoBill'); // null when blank
+
+  // Sync investment/tax assumptions into ASSUME (read by simulate())
+  ASSUME.etfReturn   = clamp(num('etfReturn')   ?? 7, 0, 15) / 100;
+  ASSUME.inflation   = clamp(num('inflatie')    ?? 2, 0, 10) / 100;
+  ASSUME.otherWealth = clamp(num('otherWealth') ?? 0, 0, 5000000);
+  ASSUME.box3On      = checked('box3On');
+
   return {
-    ink:          clamp(+document.getElementById('inkomen').value,   0,     250000),
-    schuld:       clamp(+document.getElementById('schuld').value,    1000,  300000),
-    rente:        clamp(+document.getElementById('rente').value,     0,     15),
-    jaren:        clamp(+document.getElementById('jaren').value,     1,     35),
-    drempel:      clamp(+document.getElementById('drempel').value,   10000, 80000),
-    aanloopJaar:  parseInt(document.getElementById('aanloopJaar')?.value || '2023', 10),
+    ownInk, partnerInk, partnerOn, abroadOn,
+    ink,
+    schuld:      clamp(+document.getElementById('schuld').value, 1000, 300000),
+    rente:       clamp(+document.getElementById('rente').value,  0,    15),
+    jaren:       clamp(+document.getElementById('jaren').value,   1,    35),
+    drempel,
+    huidigInk, duoBill,
+    aanloopJaar: parseInt(document.getElementById('aanloopJaar')?.value || '2023', 10),
   };
 }
 
@@ -1139,7 +1750,7 @@ function refreshSlider(ink, drempel) {
   document.getElementById('sliderAnnotations').innerHTML =
     `<div class="slider-tick" style="left:${tp}%">
        <div class="slider-tick-line"></div>
-       <div class="slider-tick-label">drempel ${fmt(drempel)}</div>
+       <div class="slider-tick-label">${t('sliderTick', { v: fmt(drempel) })}</div>
      </div>`;
 }
 
@@ -1148,6 +1759,23 @@ function refreshSlider(ink, drempel) {
 // ─────────────────────────────────────────────────────
 function refreshPresets(ink) {
   document.querySelectorAll('.pill').forEach(b => b.classList.toggle('active', +b.dataset.val === ink));
+}
+
+// Sync context toggle visuals + reveal conditional fields
+function refreshContext() {
+  const partnerOn = checked('partnerOn');
+  const abroadOn  = checked('abroadOn');
+  document.getElementById('partnerToggle').classList.toggle('on', partnerOn);
+  document.getElementById('abroadToggle').classList.toggle('on', abroadOn);
+  document.getElementById('box3Toggle').classList.toggle('on', checked('box3On'));
+  document.getElementById('partnerFields').classList.toggle('open', partnerOn);
+  document.getElementById('abroadNote').style.display = abroadOn ? 'block' : 'none';
+  // Drempel is auto-set to the partner threshold when a partner is active
+  const drempelInput = document.getElementById('drempel');
+  if (drempelInput) {
+    drempelInput.disabled = partnerOn;
+    drempelInput.style.opacity = partnerOn ? '0.5' : '1';
+  }
 }
 
 // ─────────────────────────────────────────────────────
@@ -1195,11 +1823,11 @@ function flash(el) {
 //  UPDATE CALCULATOR CARD
 // ─────────────────────────────────────────────────────
 function updateCalc() {
-  const { ink, schuld, rente, jaren, drempel } = inp();
+  const { ink, ownInk, partnerOn, partnerInk, schuld, rente, jaren, drempel } = inp();
 
-  document.getElementById('inkVal').textContent = '€' + ink.toLocaleString('nl-NL');
-  refreshSlider(ink, drempel);
-  refreshPresets(ink);
+  document.getElementById('inkVal').textContent = '€' + ownInk.toLocaleString('nl-NL');
+  refreshSlider(ownInk, drempel);
+  refreshPresets(ownInk);
 
   const dk_raw  = draagkracht(ink, drempel);
   const dk      = dk_raw > DK_FLOOR ? dk_raw : 0; // SF35 €5-drempelregel
@@ -1220,13 +1848,13 @@ function updateCalc() {
 
   if (zeroPay) {
     num.className  = 'hero-num green';
-    tag.textContent  = 'geen betalingsverplichting';
+    tag.textContent  = t('tagZero');
   } else if (dkWins) {
     num.className  = 'hero-num blue';
-    tag.textContent  = 'draagkrachtbedrag';
+    tag.textContent  = t('tagDk');
   } else {
     num.className  = 'hero-num amber';
-    tag.textContent  = 'wettelijk maandbedrag';
+    tag.textContent  = t('tagWm');
   }
 
   // ── Comparison rows
@@ -1237,12 +1865,12 @@ function updateCalc() {
 
   const over = ink - drempel;
   document.getElementById('fmtDk').textContent = over <= 0
-    ? `inkomen ≤ drempel → €0`
+    ? t('fmtDkUnder')
     : dk_raw <= DK_FLOOR
-    ? `4% formule → ${fmt(dk_raw)} ≤ €5 → €0`
-    : `4% × (${fmt(ink)} − ${fmt(drempel)}) ÷ 12`;
+    ? t('fmtDkFloor', { dk: fmt(dk_raw) })
+    : t('fmtDkNorm', { ink: fmt(ink), drempel: fmt(drempel) });
   document.getElementById('fmtWm').textContent =
-    `annuïteit ${fmt(schuld)} @ ${rente}% / ${jaren} jr`;
+    t('fmtWm', { schuld: fmt(schuld), rente, jaren });
   ticker(document.getElementById('amtDk'), dk);
   ticker(document.getElementById('amtWm'), wm);
 
@@ -1253,20 +1881,20 @@ function updateCalc() {
   if (zeroPay && ink <= drempel) {
     strat.style.cssText = `background:var(--green-bg);border-color:var(--green-bd)`;
     icon.textContent = '🟢';
-    text.innerHTML = `<strong>Geen verplichting.</strong> Jouw inkomen ligt onder de drempel van ${fmt(drempel)}, dus draagkracht = €0. Je hoeft DUO dit jaar niets te betalen. Overweeg pauze-maanden te sparen voor jaren met hóger inkomen.`;
+    text.innerHTML = t('stratZeroUnder', { drempel: fmt(drempel) });
   } else if (zeroPay) {
     // Above drempel but dk_raw ≤ €5 — SF35 §4.9 Besluit SF floor rule
     strat.style.cssText = `background:var(--green-bg);border-color:var(--green-bd)`;
     icon.textContent = '🟢';
-    text.innerHTML = `<strong>Geen verplichting (SF35 €5-drempelregel).</strong> Je draagkracht is ${fmt(dk_raw)}/mnd — positief, maar DUO vereist alleen betaling als draagkracht <em>meer</em> dan €5/mnd bedraagt (Art. 6.10 lid 3 WSF 2000). Effectief betaal je €0. Spaar pauze-maanden voor jaren met hóger inkomen.`;
+    text.innerHTML = t('stratZeroFloor', { dkRaw: fmt(dk_raw) });
   } else if (dkWins) {
     strat.style.cssText = `background:var(--blue-bg);border-color:var(--blue-bd)`;
     icon.textContent = '💡';
-    text.innerHTML = `<strong>Minimale verplichting: ${fmt(dk)}/mnd.</strong> Het verschil — ${fmt(etfRoom)}/mnd — blijft vrij voor ETF-investering. Belegd @ 7%/jaar compound groeit dat over 34 jaar naar een substantieel vermogen. In 2060 wordt de resterende schuld automatisch kwijtgescholden.`;
+    text.innerHTML = t('stratDk', { dk: fmt(dk), etfRoom: fmt(etfRoom), pct: Math.round(ASSUME.etfReturn * 100) });
   } else {
     strat.style.cssText = `background:var(--amber-bg);border-color:var(--amber-bd)`;
     icon.textContent = '📊';
-    text.innerHTML = `<strong>Wettelijk maandbedrag geldt: ${fmt(wm)}/mnd.</strong> Bij dit inkomen zou de draagkracht (${fmt(dk)}) hoger zijn dan het wettelijk bedrag — je betaalt nooit méér dan het wettelijk bedrag. Er is geen ETF-ruimte op dit inkomensniveau.`;
+    text.innerHTML = t('stratWm', { wm: fmt(wm), dk: fmt(dk) });
   }
 
   // ── Stats
@@ -1277,8 +1905,8 @@ function updateCalc() {
   document.getElementById('statGroei').style.color = netto <= 0 ? 'var(--red)' : 'var(--green)';
   document.getElementById('statGroeiSub').textContent =
     netto <= 0
-      ? `Schuld groeit ${fmt(groei)}/mnd`
-      : `Schuld daalt ${fmt(groei)}/mnd`;
+      ? t('groeiUp',   { g: fmt(groei) })
+      : t('groeiDown', { g: fmt(groei) });
 
   document.getElementById('statEtf').textContent = fmt(etfRoom);
 
@@ -1286,58 +1914,118 @@ function updateCalc() {
   const { finalDebt } = simulate(ink, schuld, rente, jaren, drempel);
   const eindEl  = document.getElementById('statEind');
   const eindSub = document.getElementById('statEindSub');
-  document.getElementById('statEindLbl').textContent = `Schuld na ${jaren} jr`;
+  document.getElementById('statEindLbl').textContent = t('eindLbl', { jaren });
   ticker(eindEl, finalDebt);
   if (finalDebt < 1) {
     eindEl.style.color  = 'var(--green)';
-    eindSub.textContent = '→ volledig afgelost';
+    eindSub.textContent = t('eindPaid');
   } else {
     eindEl.style.color  = 'var(--blue)';
-    eindSub.textContent = '→ kwijtgescholden';
+    eindSub.textContent = t('eindKwit');
   }
 
   // ── Draagkracht live breakdown
   const box  = document.getElementById('dkExplainer');
-  document.getElementById('dkbInk').textContent     = fmt(ink) + '/jaar';
-  document.getElementById('dkbDrempel').textContent = '− ' + fmt(drempel) + '/jaar';
+  document.getElementById('dkbInk').textContent     = t('dkbInkVal', { ink: fmt(ink) });
+  document.getElementById('dkbDrempel').textContent = t('dkbDrempelVal', { drempel: fmt(drempel) });
 
   if (over <= 0) {
-    document.getElementById('dkbOverLbl').innerHTML  = '= Inkomen ≤ drempel';
-    document.getElementById('dkbOver').textContent   = '→ €0 over';
+    document.getElementById('dkbOverLbl').innerHTML  = t('dkbOverUnder');
+    document.getElementById('dkbOver').textContent   = t('dkbOverZero');
     document.getElementById('dkbRateRow').className  = 'dk-step dimmed';
     document.getElementById('dkbDivRow').className   = 'dk-step dimmed';
     document.getElementById('dkbYear').textContent   = '—';
     document.getElementById('dkbDiv').textContent    = '—';
     document.getElementById('dkbFinalRow').className = 'dk-step final-zero';
-    document.getElementById('dkbFinal').textContent  = '€0/mnd';
+    document.getElementById('dkbFinal').textContent  = t('dkbFinalZero');
     document.getElementById('dkb5Row').className     = 'dk-step dimmed';
     document.getElementById('dkb5Val').textContent   = '—';
   } else if (dk_raw <= DK_FLOOR) {
     // Above drempel but ≤ €5 floor — SF35 rule kicks in
-    document.getElementById('dkbOverLbl').innerHTML  = '= Inkomen boven drempel';
-    document.getElementById('dkbOver').textContent   = fmt(over) + '/jaar';
+    document.getElementById('dkbOverLbl').innerHTML  = t('dkbOverNorm');
+    document.getElementById('dkbOver').textContent   = t('dkbOverVal', { over: fmt(over) });
     document.getElementById('dkbRateRow').className  = 'dk-step';
     document.getElementById('dkbDivRow').className   = 'dk-step';
     const jaarDk = over * 0.04;
-    document.getElementById('dkbYear').textContent   = fmt(jaarDk) + '/jaar';
-    document.getElementById('dkbDiv').textContent    = fmt(jaarDk) + ' ÷ 12';
+    document.getElementById('dkbYear').textContent   = t('dkbYearVal', { jaarDk: fmt(jaarDk) });
+    document.getElementById('dkbDiv').textContent    = t('dkbDivVal', { jaarDk: fmt(jaarDk) });
     document.getElementById('dkbFinalRow').className = 'dk-step final-zero';
-    document.getElementById('dkbFinal').textContent  = fmt(dk_raw) + '/mnd';
+    document.getElementById('dkbFinal').textContent  = t('dkbFinalVal', { dkRaw: fmt(dk_raw) });
     document.getElementById('dkb5Row').className     = 'dk-step floor-active';
-    document.getElementById('dkb5Val').textContent   = `${fmt(dk_raw)} ≤ €5 → effectief €0`;
+    document.getElementById('dkb5Val').textContent   = t('dkb5Floor', { dkRaw: fmt(dk_raw) });
   } else {
-    document.getElementById('dkbOverLbl').innerHTML  = '= Inkomen boven drempel';
-    document.getElementById('dkbOver').textContent   = fmt(over) + '/jaar';
+    document.getElementById('dkbOverLbl').innerHTML  = t('dkbOverNorm');
+    document.getElementById('dkbOver').textContent   = t('dkbOverVal', { over: fmt(over) });
     document.getElementById('dkbRateRow').className  = 'dk-step';
     document.getElementById('dkbDivRow').className   = 'dk-step';
     const jaarDk = over * 0.04;
-    document.getElementById('dkbYear').textContent   = fmt(jaarDk) + '/jaar';
-    document.getElementById('dkbDiv').textContent    = fmt(jaarDk) + ' ÷ 12';
+    document.getElementById('dkbYear').textContent   = t('dkbYearVal', { jaarDk: fmt(jaarDk) });
+    document.getElementById('dkbDiv').textContent    = t('dkbDivVal', { jaarDk: fmt(jaarDk) });
     document.getElementById('dkbFinalRow').className = 'dk-step final';
-    document.getElementById('dkbFinal').textContent  = fmt(dk_raw) + '/mnd';
+    document.getElementById('dkbFinal').textContent  = t('dkbFinalVal', { dkRaw: fmt(dk_raw) });
     document.getElementById('dkb5Row').className     = 'dk-step floor-pass';
-    document.getElementById('dkb5Val').textContent   = `> €5 — betaling vereist`;
+    document.getElementById('dkb5Val').textContent   = t('dkb5Pass');
   }
+}
+
+// ─────────────────────────────────────────────────────
+//  BUILD: SMART SIGNALS
+// ─────────────────────────────────────────────────────
+function sig(kind, icon, body, act) {
+  return `<div class="signal ${kind}">
+    <span class="signal-icon">${icon}</span>
+    <div class="signal-body">${body}${act ? `<div class="signal-act">${act}</div>` : ''}</div>
+  </div>`;
+}
+
+function buildSignals() {
+  const { ink, partnerOn, abroadOn, schuld, rente, jaren, drempel, huidigInk, duoBill } = inp();
+  const dk_raw = draagkracht(ink, drempel);
+  const dk     = dk_raw > DK_FLOOR ? dk_raw : 0;
+  const wm     = annuiteit(schuld, rente, jaren);
+  const pay    = Math.min(dk, wm);
+  const out = [];
+
+  // 1) €0 reality check
+  if (pay === 0) {
+    const reason = ink <= drempel
+      ? t('sigZeroReasonUnder', { partner: partnerOn, ink: fmt(ink), drempel: fmt(drempel) })
+      : t('sigZeroReasonFloor', { dkRaw: fmt(dk_raw) });
+    out.push(sig('green', '✅',
+      t('sigZeroBody', { reason }),
+      t('sigZeroAct')));
+  }
+
+  // 2) Overpayment detector
+  if (duoBill != null && duoBill > pay + 1) {
+    const diff = duoBill - pay;
+    out.push(sig('amber', '⚠️',
+      t('sigOverBody', { diff: fmt(diff), bill: fmt(duoBill), pay: pay === 0 ? '€0' : fmt(pay) + '/mnd' }),
+      t('sigOverAct')));
+  } else if (duoBill != null && duoBill > 0 && duoBill < pay - 1) {
+    out.push(sig('amber', '📌',
+      t('sigUnderBody', { bill: fmt(duoBill), pay: fmt(pay) })));
+  }
+
+  // 3) Peiljaarverlegging eligibility
+  const dropPct = ink > 0 ? (1 - huidigInk / ink) : 0;
+  if (huidigInk < ink * 0.85 || huidigInk < PEILJAARV_MIN) {
+    const why = huidigInk < PEILJAARV_MIN
+      ? t('sigPeilWhyMin', { huidig: fmt(huidigInk), min: fmt(PEILJAARV_MIN) })
+      : t('sigPeilWhyDrop', { huidig: fmt(huidigInk), pct: Math.round(dropPct * 100), ink: fmt(ink) });
+    out.push(sig('blue', '🔻',
+      t('sigPeilBody', { why }),
+      t('sigPeilAct')));
+  }
+
+  // Positive / default state
+  if (out.length === 0) {
+    const bind = dk <= wm ? t('sigNeutralBindDk') : t('sigNeutralBindWm');
+    out.push(sig('neutral', '💡',
+      t('sigNeutralBody', { pay: fmt(pay), bind })));
+  }
+
+  document.getElementById('signals').innerHTML = out.join('');
 }
 
 // ─────────────────────────────────────────────────────
@@ -1382,9 +2070,9 @@ function buildCurve() {
     data: {
       labels: xs,
       datasets: [
-        { label: 'Te betalen (laagste van twee)', data: payArr, borderColor: '#1a1917', backgroundColor: 'rgba(26,25,23,0.04)', borderWidth: 2.5, fill: true, tension: 0, pointRadius: 0 },
-        { label: 'Draagkracht (4%-formule)', data: dkArr, borderColor: '#2350d4', borderWidth: 1.5, borderDash: [5,3], fill: false, tension: 0, pointRadius: 0 },
-        { label: `Wettelijk (${fmt(wm)}/mnd)`, data: wmArr, borderColor: '#b85c0c', borderWidth: 1.5, borderDash: [7,3], fill: false, tension: 0, pointRadius: 0 },
+        { label: t('curvePay'), data: payArr, borderColor: '#1a1917', backgroundColor: 'rgba(26,25,23,0.04)', borderWidth: 2.5, fill: true, tension: 0, pointRadius: 0 },
+        { label: t('curveDk'), data: dkArr, borderColor: '#2350d4', borderWidth: 1.5, borderDash: [5,3], fill: false, tension: 0, pointRadius: 0 },
+        { label: t('curveWm', { wm: fmt(wm) }), data: wmArr, borderColor: '#b85c0c', borderWidth: 1.5, borderDash: [7,3], fill: false, tension: 0, pointRadius: 0 },
       ]
     },
     options: {
@@ -1407,11 +2095,11 @@ function buildCurve() {
   const room = Math.max(0, wm - pay);
   const crossover = drempel + wm * 12 / 0.04;
   document.getElementById('curveInsight').innerHTML =
-    `Bij je huidige inkomen (${fmt(ink)}) betaal je <strong>${fmt(pay)}/mnd</strong>. ` +
+    t('curveInsightA', { ink: fmt(ink), pay: fmt(pay) }) +
     (room > 0
-      ? `Je houdt <strong>${fmt(room)}/mnd</strong> over t.o.v. het wettelijk bedrag — dat is je ETF-ruimte.`
-      : `Je betaalt het wettelijk bedrag; draagkracht > wettelijk.`) +
-    ` Draagkracht = wettelijk bij ~${fmt(crossover)} jaarinkomen.`;
+      ? t('curveInsightRoom', { room: fmt(room) })
+      : t('curveInsightNoRoom')) +
+    t('curveInsightCross', { cross: fmt(crossover) });
 }
 
 // ─────────────────────────────────────────────────────
@@ -1425,9 +2113,32 @@ function buildDebt() {
 
   const labels = Array.from({ length: jaren + 1 }, (_, i) => i === 0 ? 'Nu' : `${i}`);
 
+  const chosenPct = Math.round(ASSUME.etfReturn * 100);
+
   document.getElementById('sumKwit').textContent = fmt(r1.finalDebt);
   document.getElementById('sumPaid').textContent = fmt(r1.totalPaid);
   document.getElementById('sumEtf').textContent  = fmt(r1.etfValue);
+
+  // Inflation-adjusted ("in euro's van nu") sub-labels
+  document.getElementById('sumKwitSub').textContent = t('sumKwitSubReal', { real: fmt(r1.realFinalDebt) });
+  document.getElementById('sumEtfSub').textContent  = t('sumEtfSubReal',  { real: fmt(r1.realEtfValue) });
+
+  // ── Return sensitivity (3 / 5 / 7 %) + box-3 drag where enabled
+  const sens = [3, 5, 7].map(p => {
+    const r = simulate(ink, schuld, rente, jaren, drempel, { etfReturn: p / 100 });
+    return { p, nominal: r.etfValue, real: realValue(r.etfValue, jaren) };
+  });
+  const sensRows = sens.map(s => {
+    const sel = s.p === chosenPct ? ' class="sens-chosen"' : '';
+    return `<tr${sel}><td>${s.p}%</td><td>${fmt(s.nominal)}</td><td>${fmt(s.real)}</td></tr>`;
+  }).join('');
+  document.getElementById('sensTable').innerHTML =
+    `<tr class="sa-cmp-head"><th>${t('sensRet')}</th><th>${t('sensNom')}</th><th>${t('sensReal')}</th></tr>${sensRows}`;
+  document.getElementById('sensNote').innerHTML =
+    t('sensNotePre', { pct: chosenPct }) +
+    (ASSUME.box3On
+      ? t('sensBox3On', { eff: (BOX3.effRate * 100).toFixed(2), allow: fmt(BOX3.allowance) })
+      : t('sensBox3Off'));
 
   destroy('debt');
   charts.debt = new Chart(document.getElementById('chartDebt'), {
@@ -1435,10 +2146,10 @@ function buildDebt() {
     data: {
       labels,
       datasets: [
-        { label: `Schuld — min. betalen (${fmt(ink)}/jr)`, data: r1.pts, borderColor: '#2350d4', backgroundColor: 'rgba(35,80,212,0.06)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0 },
-        { label: `Schuld — inkomen ×1,75 (${fmt(ink*1.75)}/jr)`, data: r2.pts, borderColor: '#7c3aed', borderWidth: 2, borderDash: [5,3], fill: false, tension: 0.3, pointRadius: 0 },
-        { label: 'Schuld — altijd wettelijk betalen', data: r3.pts, borderColor: '#1a7a47', borderWidth: 1.5, borderDash: [3,3], fill: false, tension: 0.3, pointRadius: 0 },
-        { label: `ETF-portfolio @ 7%/jr (${fmt(ink)}/jr inkomen)`, data: r1.etfPts, borderColor: '#b85c0c', borderWidth: 2.5, borderDash: [6,2], fill: false, tension: 0.3, pointRadius: 0 },
+        { label: t('debtMin', { ink: fmt(ink) }), data: r1.pts, borderColor: '#2350d4', backgroundColor: 'rgba(35,80,212,0.06)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0 },
+        { label: t('debtX175', { ink: fmt(ink*1.75) }), data: r2.pts, borderColor: '#7c3aed', borderWidth: 2, borderDash: [5,3], fill: false, tension: 0.3, pointRadius: 0 },
+        { label: t('debtAlways'), data: r3.pts, borderColor: '#1a7a47', borderWidth: 1.5, borderDash: [3,3], fill: false, tension: 0.3, pointRadius: 0 },
+        { label: t('debtEtf', { pct: chosenPct, ink: fmt(ink) }), data: r1.etfPts, borderColor: '#b85c0c', borderWidth: 2.5, borderDash: [6,2], fill: false, tension: 0.3, pointRadius: 0 },
       ]
     },
     options: {
@@ -1449,7 +2160,7 @@ function buildDebt() {
         tooltip: { callbacks: { label: c => `${c.dataset.label}: ${fmt(c.parsed.y)}` } }
       },
       scales: {
-        x: { title: { display: true, text: 'Jaar', font: { size: 10 }, color: '#a39f99' }, ticks: { maxTicksLimit: 12, font: { size: 10 }, color: '#a39f99' }, grid: { color: '#e2dfd8' } },
+        x: { title: { display: true, text: t('debtAxisYear'), font: { size: 10 }, color: '#a39f99' }, ticks: { maxTicksLimit: 12, font: { size: 10 }, color: '#a39f99' }, grid: { color: '#e2dfd8' } },
         y: { ticks: { callback: v => fmt(v), font: { size: 10 }, color: '#a39f99' }, grid: { color: '#e2dfd8' } }
       }
     }
@@ -1460,9 +2171,7 @@ function buildDebt() {
   const crossoverFinalInk = drempel + wmFinalYear * 12 / 0.04;
 
   document.getElementById('debtInsight').innerHTML =
-    `<strong>Wat levert de strategie op?</strong> Je betaalt in 35 jaar slechts <strong>${fmt(r1.totalPaid)}</strong> aan DUO. ` +
-    `De resterende schuld (<strong>${fmt(r1.finalDebt)}</strong>) wordt in 2060 kwijtgescholden. ` +
-    `Ondertussen groeit je ETF-portfolio naar <strong>${fmt(r1.etfValue)}</strong>.`;
+    t('debtInsight', { paid: fmt(r1.totalPaid), debt: fmt(r1.finalDebt), etf: fmt(r1.etfValue) });
 
   // ── Strategy analysis
   const wm_now        = annuiteit(schuld, rente, jaren);
@@ -1489,7 +2198,7 @@ function buildDebt() {
       <span class="sa-zone-dot" style="color:${n===1?'var(--red)':n===2?'var(--amber)':'var(--green)'}">${dot}</span>
       <span class="sa-zone-lbl">${label}</span>
       <span class="sa-zone-rng">${range}</span>
-      ${active ? `<span class="sa-zone-you">jij</span>` : ''}
+      ${active ? `<span class="sa-zone-you">${t('saYou')}</span>` : ''}
     </div>${extra}`;
   };
 
@@ -1503,56 +2212,55 @@ function buildDebt() {
 
   // Update ETF note with actual assumed amount
   document.getElementById('etfNote').textContent =
-    `ETF-aanname: ~${fmt(etfContrib)}/mnd (= wettelijk − draagkracht bij huidig inkomen) @ 7%/jr compound. ` +
-    `Dit verandert als de rente na 2027 wijzigt.`;
+    t('etfNoteDyn', { contrib: fmt(etfContrib), pct: chosenPct, box3: ASSUME.box3On });
 
   document.getElementById('stratAnalysis').innerHTML = `
-    <div class="sa-title">Strategie-analyse</div>
+    <div class="sa-title">${t('saTitle')}</div>
 
     <div class="sa-zones">
-      ${zoneHtml(1, '●', 'Schuld groeit', `ink &lt; ${fmt(breakEvenPost)} (scenario: 2,33% na 2028)`,
+      ${zoneHtml(1, '●', t('saZoneGrow'), t('saZoneGrowRange', { be: fmt(breakEvenPost) }),
         shrinkingNowGrowsLater
-          ? `<div class="note" style="margin:0.15rem 0 0.1rem 1.4rem;color:var(--amber)">⚠ Nu krimpt je schuld nog (bij 0,46%), maar na de renteherziening in 2028 groeit hij weer bij dit inkomen.</div>`
+          ? `<div class="note" style="margin:0.15rem 0 0.1rem 1.4rem;color:var(--amber)">${t('saZoneGrowWarn')}</div>`
           : ''
       )}
-      ${zoneHtml(2, '●', 'Schuld krimpt — deels kwijtgescholden in 2060',
-        `${fmt(breakEvenPost)} – ${fmt(fullPayoffInc)}`)}
-      ${zoneHtml(3, '●', 'Volledig afgelost — geen kwijtschelding nodig',
-        `ink ≥ ${fmt(fullPayoffInc)}`)}
+      ${zoneHtml(2, '●', t('saZoneShrink'),
+        t('saZoneShrinkRange', { be: fmt(breakEvenPost), full: fmt(fullPayoffInc) }))}
+      ${zoneHtml(3, '●', t('saZoneFull'),
+        t('saZoneFullRange', { full: fmt(fullPayoffInc) }))}
     </div>
 
     <table class="sa-cmp">
       <tr>
-        <th>Strategie</th>
-        <th>Betaald DUO</th>
-        <th>Kwijtgescholden</th>
-        <th>ETF 2060*</th>
+        <th>${t('saCmpStrat')}</th>
+        <th>${t('saCmpPaid')}</th>
+        <th>${t('saCmpKwit')}</th>
+        <th>${t('saCmpEtf')}</th>
       </tr>
       <tr>
-        <td><strong>A — min betalen</strong></td>
+        <td><strong>${t('saRowA')}</strong></td>
         <td class="neg">${fmt(r1.totalPaid)}</td>
         <td class="pos">${fmt(r1.finalDebt)}</td>
         <td class="pos">${fmt(r1.etfValue)}</td>
       </tr>
       <tr>
-        <td><strong>B — altijd wettelijk</strong></td>
+        <td><strong>${t('saRowB')}</strong></td>
         <td class="neg">${fmt(r3.totalPaid)}</td>
         <td class="dim">€0</td>
         <td class="dim">€0</td>
       </tr>
       <tr>
-        <td>Voordeel A</td>
-        <td class="pos">+${fmt(advantagePaid)} minder</td>
+        <td>${t('saRowAdv')}</td>
+        <td class="pos">${t('saAdvPaid', { v: fmt(advantagePaid) })}</td>
         <td class="pos">+${fmt(advantageKwit)}</td>
         <td class="pos">+${fmt(advantageEtf)}</td>
       </tr>
     </table>
 
     <div class="sa-risk">
-      <strong>Risico: wet verandert vóór 2060.</strong>
+      <strong>${t('saRiskTitle')}</strong>
       ${resilient
-        ? `Zelfs dan: je ETF (${fmt(r1.etfValue)}) minus de dan nog openstaande schuld (${fmt(r1.finalDebt)}) = <strong>+${fmt(netIfLawChanges)} netto voordeel</strong> t.o.v. Strategie B. De kwijtschelding is een bonus, niet de fundering van de strategie.`
-        : `Let op: je ETF (${fmt(r1.etfValue)}) dekt de restschuld (${fmt(r1.finalDebt)}) niet volledig. Overweeg een hogere maandelijkse ETF-inleg, of een hogere inkomensdoelstelling.`
+        ? t('saRiskResilient', { etf: fmt(r1.etfValue), debt: fmt(r1.finalDebt), net: fmt(netIfLawChanges) })
+        : t('saRiskNot', { etf: fmt(r1.etfValue), debt: fmt(r1.finalDebt) })
       }
     </div>`;
 }
@@ -1574,22 +2282,31 @@ function buildTable() {
   const crossoverLate = lateDrempel + lateWm * 12 / 0.04;
 
   const rows = [
-    { label: 'Werkloos / laag inkomen', ink: 30000  },
-    { label: '€45k',                   ink: 45000  },
-    { label: '€65k',                   ink: 65000  },
-    { label: '€100k',                  ink: 100000 },
-    { label: '€150k',                  ink: 150000 },
-    { label: '€250k',                  ink: 250000 },
-    { label: '€400k',                  ink: 400000 },
+    { label: t('scRowUnemployed'), ink: 30000  },
+    { label: '€45k',               ink: 45000  },
+    { label: '€65k',               ink: 65000  },
+    { label: '€100k',              ink: 100000 },
+    { label: '€150k',              ink: 150000 },
+    { label: '€250k',              ink: 250000 },
+    { label: '€400k',              ink: 400000 },
   ];
 
+  const crossoverRow = `<tr style="background:var(--amber-bg);">
+    <td><strong>${fmt(crossoverLate)}</strong><br><span style="font-size:0.68rem;color:var(--amber);font-weight:600">${t('scOmslag')}</span></td>
+    <td class="mono blue">${fmt(lateWm)}/mnd</td>
+    <td class="mono">${fmt(lateWm)}/mnd</td>
+    <td class="mono"><strong>${fmt(lateWm)}/mnd</strong></td>
+    <td style="color:var(--amber);font-weight:600">${t('scGelijk')}</td>
+    <td class="red">${t('scFullPaid')}</td>
+  </tr>`;
+
   let html = `<tr>
-    <th>Inkomen / jaar</th>
-    <th>Draagkracht</th>
-    <th>Wettelijk</th>
-    <th>Je betaalt</th>
-    <th>Bindend</th>
-    <th>Kwijtgescholden</th>
+    <th>${t('scHdrInk')}</th>
+    <th>${t('scHdrDk')}</th>
+    <th>${t('scHdrWm')}</th>
+    <th>${t('scHdrPay')}</th>
+    <th>${t('scHdrBind')}</th>
+    <th>${t('scHdrKwit')}</th>
   </tr>`;
 
   let crossoverRowInserted = false;
@@ -1597,14 +2314,7 @@ function buildTable() {
     // Insert the crossover row just before the first row that exceeds it
     if (!crossoverRowInserted && sc.ink >= crossoverLate) {
       crossoverRowInserted = true;
-      html += `<tr style="background:var(--amber-bg);">
-        <td><strong>${fmt(crossoverLate)}</strong><br><span style="font-size:0.68rem;color:var(--amber);font-weight:600">omslagpunt</span></td>
-        <td class="mono blue">${fmt(lateWm)}/mnd</td>
-        <td class="mono">${fmt(lateWm)}/mnd</td>
-        <td class="mono"><strong>${fmt(lateWm)}/mnd</strong></td>
-        <td style="color:var(--amber);font-weight:600">gelijk</td>
-        <td class="red">€0 — volledig betaald</td>
-      </tr>`;
+      html += crossoverRow;
     }
 
     const dk_raw  = draagkracht(sc.ink, lateDrempel);
@@ -1612,7 +2322,8 @@ function buildTable() {
     const pay     = Math.min(dk, lateWm);
     const interest= lateDebt * lateRente / 100 / 12;
     const forgiven= Math.max(0, lateDebt - (pay - interest) * 60);
-    const binding = dk <= lateWm ? 'draagkracht' : 'wettelijk';
+    const isDk    = dk <= lateWm;
+    const binding = isDk ? t('scBindDk') : t('scBindWm');
     const isHl    = sc.ink >= ink * 0.9 && sc.ink <= ink * 1.1;
 
     html += `<tr ${isHl ? 'class="hl"' : ''}>
@@ -1620,29 +2331,19 @@ function buildTable() {
       <td class="mono blue">${fmt(dk)}/mnd</td>
       <td class="mono">${fmt(lateWm)}/mnd</td>
       <td class="mono"><strong>${fmt(pay)}/mnd</strong></td>
-      <td class="${binding === 'draagkracht' ? 'green' : 'red'}">${binding}</td>
+      <td class="${isDk ? 'green' : 'red'}">${binding}</td>
       <td class="red">${fmt(forgiven)}</td>
     </tr>`;
   });
 
   // Insert at end if crossover is above all rows
   if (!crossoverRowInserted) {
-    html += `<tr style="background:var(--amber-bg);">
-      <td><strong>${fmt(crossoverLate)}</strong><br><span style="font-size:0.68rem;color:var(--amber);font-weight:600">omslagpunt</span></td>
-      <td class="mono blue">${fmt(lateWm)}/mnd</td>
-      <td class="mono">${fmt(lateWm)}/mnd</td>
-      <td class="mono"><strong>${fmt(lateWm)}/mnd</strong></td>
-      <td style="color:var(--amber);font-weight:600">gelijk</td>
-      <td class="red">€0 — volledig betaald</td>
-    </tr>`;
+    html += crossoverRow;
   }
 
   document.getElementById('scTable').innerHTML = html;
   document.getElementById('scNote').innerHTML =
-    `Geschatte schuld in 2055: <strong>${fmt(lateDebt)}</strong> · rente: ${lateRente}% · ` +
-    `drempel geïndexeerd naar ~${fmt(lateDrempel)} (minimumloon +2%/jr). ` +
-    `"Kwijtgescholden" = restschuld na 5 jaar betalingen die per jan 2060 verdwijnt. ` +
-    `Omslagpunt = inkomen waarbij draagkracht precies het wettelijk maandbedrag dekt.`;
+    t('scNote', { debt: fmt(lateDebt), rente: lateRente, drempel: fmt(lateDrempel) });
 }
 
 // ─────────────────────────────────────────────────────
@@ -1675,7 +2376,9 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 //  UPDATE ALL
 // ─────────────────────────────────────────────────────
 function updateAll() {
+  refreshContext();
   updateCalc();
+  buildSignals();
   Object.keys(dirty).forEach(k => dirty[k] = true);
   buildActive();
 }
@@ -1686,6 +2389,10 @@ function updateAll() {
 document.getElementById('advToggle').addEventListener('click', () => {
   document.getElementById('advGrid').classList.toggle('open');
   document.getElementById('advArrow').classList.toggle('open');
+});
+document.getElementById('advToggle2').addEventListener('click', () => {
+  document.getElementById('advGrid2').classList.toggle('open');
+  document.getElementById('advArrow2').classList.toggle('open');
 });
 
 // ─────────────────────────────────────────────────────
@@ -1702,36 +2409,58 @@ document.querySelectorAll('.pill').forEach(btn => {
 //  INPUT EVENTS
 // ─────────────────────────────────────────────────────
 document.getElementById('inkomen').addEventListener('input', updateAll);
-['schuld', 'rente', 'jaren', 'drempel'].forEach(id => {
+['schuld', 'rente', 'jaren', 'drempel', 'partnerInk', 'huidigInk', 'duoBill',
+ 'etfReturn', 'inflatie', 'otherWealth'].forEach(id => {
   const el = document.getElementById(id);
+  if (!el) return;
   el.addEventListener('input',  updateAll);
   el.addEventListener('change', updateAll);
+});
+['partnerOn', 'abroadOn', 'box3On'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('change', updateAll);
 });
 document.getElementById('aanloopJaar').addEventListener('change', updateAll);
 
 // ─────────────────────────────────────────────────────
-//  INIT
+//  LANGUAGE TOGGLE
 // ─────────────────────────────────────────────────────
-updateAll();
-// Set initial tab track position after layout
-requestAnimationFrame(() => refreshTabTrack());
+document.getElementById('langToggle').addEventListener('click', () => {
+  setLang(LANG === 'nl' ? 'en' : 'nl');
+});
+
+// ─────────────────────────────────────────────────────
+//  INIT  (deferred so the <footer> below this script is parsed
+//         before applyI18n() walks the [data-i18n] nodes)
+// ─────────────────────────────────────────────────────
+function init() {
+  applyI18n();
+  updateAll();
+  // Set initial tab track position after layout
+  requestAnimationFrame(() => refreshTabTrack());
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 window.addEventListener('resize', refreshTabTrack);
 </script>
 
 <!-- Footer -->
 <footer style="max-width:960px;margin:2rem auto 0;padding:1.25rem 0.85rem;border-top:1px solid #e2dfd8;font-size:0.68rem;color:#a39f99;line-height:1.6">
-  <p><strong style="color:#706d67">Bronnen en disclaimer</strong></p>
+  <p><strong style="color:#706d67" data-i18n="footerHdr">Bronnen en disclaimer</strong></p>
   <p style="margin-top:0.3rem">
     <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" style="color:#2350d4">DUO Terugbetalen</a> ·
     <a href="https://www.duo.nl/particulier/rente/rente-voor-terugbetalers.jsp" target="_blank" style="color:#2350d4">DUO Renteoverzicht</a> ·
     <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" style="color:#2350d4">WSF 2000 (wetten.overheid.nl)</a> ·
     <a href="https://mijn.duo.nl" target="_blank" style="color:#2350d4">Mijn DUO</a>
   </p>
-  <p style="margin-top:0.4rem">
+  <p style="margin-top:0.4rem" data-i18n="footerDisclaimer">
     Deze calculator is uitsluitend bedoeld als rekenmodel voor inzicht en scenario-analyse. Het vormt geen juridisch of financieel advies. Controleer altijd via Mijn DUO voor je actuele schuld, rente en maandbedrag.
     De toekomstige rente na de huidige vergrendelingsperiode is onbekend; de calculator gebruikt 2,33% (gepubliceerd SF35 tarief 2026) als scenario-aanname.
   </p>
-  <p style="margin-top:0.4rem">
+  <p style="margin-top:0.4rem" data-i18n-html="footerOpen">
     Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>
   </p>
 </footer>

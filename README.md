@@ -6,9 +6,14 @@ An interactive Dutch student loan (SF35 leenstelsel) calculator — open in any 
 
 ## What it does
 
+- **Bilingual NL / EN** — toggle in the header, preference saved in the browser
 - Calculates your monthly DUO payment (draagkracht vs wettelijk maandbedrag)
 - Shows 35-year debt trajectory under three scenarios
 - Models the ETF investment strategy (invest the freed-up amount instead of over-paying DUO)
+- **Return sensitivity** (3 / 5 / 7 %) and inflation-adjusted "today's euros" values
+- **Box-3 wealth tax** optionally applied to the investment portfolio
+- **Partner & abroad context** — combined income with the partner threshold, foreign-income reporting note
+- **Smart signals** — €0 reality check, overpayment detector, peiljaarverlegging eligibility
 - Explains the three income zones: debt grows / shrinks / fully amortised
 - Compares Strategy A (min payment + kwijtschelding 2060) vs Strategy B (always pay full annuity)
 - Accounts for the SF35 €5 floor rule (Art. 6.10 lid 3 WSF 2000)
