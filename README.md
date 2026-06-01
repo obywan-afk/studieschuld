@@ -2,7 +2,7 @@
 
 An interactive Dutch student loan (SF35 leenstelsel) calculator — open in any browser, no server needed.
 
-**Live:** [obywan-afk.github.io/studieschuld](https://obywan-afk.github.io/studieschuld)
+**Live:** [studieschuld.help](https://studieschuld.help)
 
 ## What it does
 

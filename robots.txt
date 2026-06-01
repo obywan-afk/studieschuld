@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://obywan-afk.github.io/studieschuld/sitemap.xml
+Sitemap: https://studieschuld.help/sitemap.xml
