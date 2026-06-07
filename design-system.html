@@ -214,6 +214,60 @@ section.block > .eyebrow { display: block; margin-bottom: var(--s4); padding-bot
 .sp-demo { height: 22px; background: var(--lime); border-radius: 4px; }
 
 .note { font-size: 0.82rem; color: var(--text-3); margin-top: var(--s3); }
+
+/* ── Stat header with superscript unit ────────────────── */
+.stat-head .eyebrow { display: block; margin-bottom: 0.35rem; }
+.amount {
+  font-weight: 800; letter-spacing: -0.03em; line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(2rem, 5vw, 3rem);
+  display: inline-flex; align-items: flex-start;
+}
+.amount .unit { font-size: 0.42em; font-weight: 800; margin-left: 0.12em; margin-top: 0.18em; color: var(--text-2); }
+.amount.on-color { color: var(--ink); }
+.amount.on-color .unit { color: var(--ink-soft); }
+
+/* ── Progress / ratio pill ────────────────────────────── */
+.progress {
+  position: relative; overflow: hidden;
+  border-radius: var(--r-pill);
+  min-height: 104px;
+  display: flex; align-items: center;
+  padding: 0 1.6rem; color: var(--ink);
+}
+.progress .fill { position: absolute; inset: 0 auto 0 0; border-radius: var(--r-pill); }
+.progress .content { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.progress .pct { font-size: 2.1rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1; font-variant-numeric: tabular-nums; }
+.progress .pct small { display: block; font-size: 0.36em; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 0.4rem; color: var(--ink-soft); }
+.progress .meta { font-size: 0.9rem; font-weight: 700; color: var(--ink-soft); }
+.progress.dark { color: var(--text); }
+.progress.dark .pct small, .progress.dark .meta { color: var(--text-2); }
+
+/* diagonal hatch overlays */
+.hatch::after, .hatch-light::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+}
+.hatch::after       { background-image: repeating-linear-gradient(135deg, rgba(10,10,10,0.16) 0 2px, transparent 2px 10px); }
+.hatch-light::after { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.14) 0 2px, transparent 2px 10px); }
+
+/* ── Circular action button (FAB) ─────────────────────── */
+.fab {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 0; cursor: pointer; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1.15rem; font-weight: 800; line-height: 1;
+  transition: transform 0.08s ease, filter 0.15s ease;
+}
+.fab:active { transform: scale(0.93); }
+.fab-accent   { background: var(--lime); color: var(--ink); }
+.fab-dark     { background: #000; color: var(--text); }
+.fab-on-color { background: var(--on-color-fill); color: var(--ink); }
+
+/* ── Donut ring (CSS conic) ───────────────────────────── */
+.ring { width: 128px; height: 128px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; }
+.ring .hole { width: 70px; height: 70px; border-radius: 50%; display: grid; place-items: center; text-align: center; }
+.ring .hole .v { font-weight: 800; font-size: 1.1rem; line-height: 1; }
+.ring .hole .k { font-size: 0.52rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.15rem; }
 </style>
 </head>
 <body>
@@ -390,6 +444,59 @@ section.block > .eyebrow { display: block; margin-bottom: var(--s4); padding-bot
     <div class="token-row"><div class="demo" style="width:160px"><div class="sp-demo" style="width:var(--s4)"></div></div><div class="meta"><span class="nm">s4</span><span class="vl">1rem · 16px</span></div></div>
     <div class="token-row"><div class="demo" style="width:160px"><div class="sp-demo" style="width:var(--s6)"></div></div><div class="meta"><span class="nm">s6</span><span class="vl">1.5rem · 24px</span></div></div>
     <div class="token-row"><div class="demo" style="width:160px"><div class="sp-demo" style="width:var(--s8)"></div></div><div class="meta"><span class="nm">s8</span><span class="vl">2rem · 32px</span></div></div>
+  </section>
+
+  <!-- ════ DASHBOARD PATTERNS ════ -->
+  <section class="block">
+    <span class="eyebrow">09 — Dashboard patterns</span>
+
+    <!-- stat header row -->
+    <div class="eyebrow" style="display:block;margin-bottom:0.6rem">Stat header · superscript unit</div>
+    <div class="grid cols-4" style="margin-bottom:var(--s6)">
+      <div class="stat-head"><span class="eyebrow">Balance</span><div class="amount">1.655<span class="unit">$</span></div></div>
+      <div class="stat-head"><span class="eyebrow">Income</span><div class="amount">950<span class="unit">$</span></div></div>
+      <div class="stat-head"><span class="eyebrow">Expenses</span><div class="amount">382<span class="unit">$</span></div></div>
+      <div class="stat-head"><span class="eyebrow">Draagkracht</span><div class="amount">27<span class="unit">€</span></div></div>
+    </div>
+
+    <!-- progress / ratio pills -->
+    <div class="eyebrow" style="display:block;margin-bottom:0.6rem">Progress / ratio pills</div>
+    <div class="grid cols-2" style="margin-bottom:var(--s6)">
+      <div class="progress dark hatch-light" style="background:var(--gray-card)">
+        <div class="fill hatch-light" style="width:65%;background:#4a4a4a"></div>
+        <div class="content"><div class="pct">65%<small>Transfer</small></div><div class="meta">29/user</div></div>
+      </div>
+      <div class="progress hatch" style="background:var(--lime)">
+        <div class="content"><div class="pct">31%<small>Receive</small></div><div class="meta">8/user</div></div>
+      </div>
+    </div>
+
+    <!-- feature card with donut + FAB -->
+    <div class="eyebrow" style="display:block;margin-bottom:0.6rem">Feature card · donut + action button</div>
+    <div class="card colored" style="background:var(--blue);margin-bottom:var(--s6)">
+      <div class="card-head"><span class="eyebrow on-color">Analytics</span><button class="fab fab-dark" aria-label="Open">↗</button></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s5);flex-wrap:wrap">
+        <div>
+          <div class="amount on-color" style="font-size:3.2rem">78<span class="unit">%</span></div>
+          <div class="subtitle" style="color:var(--ink);margin-top:0.1rem">Increase</div>
+          <div class="chips" style="margin-top:var(--s4)">
+            <button class="btn btn-on-color">Year-end improvements ↗</button>
+          </div>
+        </div>
+        <div class="ring" style="background:conic-gradient(#000 0 70%, var(--text) 70% 100%)">
+          <div class="hole" style="background:var(--sky)"><div><div class="v">78%</div><div class="k">income</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAB variants -->
+    <div class="eyebrow" style="display:block;margin-bottom:0.6rem">Circular action buttons</div>
+    <div class="chips" style="align-items:center">
+      <button class="fab fab-accent" aria-label="a">↗</button>
+      <button class="fab fab-dark" aria-label="b">↗</button>
+      <span class="card colored" style="background:var(--orange);padding:0.5rem;border-radius:var(--r-pill);display:inline-flex"><button class="fab fab-on-color" aria-label="c">↗</button></span>
+    </div>
+    <p class="note">Superscript units use <code>.amount .unit</code> (0.42em, top-aligned). Progress pills layer a <code>.fill</code> + hatch overlay under <code>.content</code>. FABs are 48px circles; the ring is a CSS <code>conic-gradient</code> with a solid hole.</p>
   </section>
 
   <footer style="margin-top:var(--s10);padding-top:var(--s5);border-top:1px solid var(--line);color:var(--text-3);font-size:0.78rem">
