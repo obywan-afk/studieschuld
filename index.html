@@ -13,7 +13,6 @@
 <meta property="og:description" content="Bereken je maandelijkse DUO-verplichting, schuldontwikkeling en strategie voor SF35-leningen.">
 <meta property="og:url" content="https://studieschuld.help/">
 <meta name="twitter:card" content="summary">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5255329257236286" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root {
@@ -753,57 +752,8 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* ══════════════
-   MONETIZATION
+   SUPPORT
 ══════════════ */
-.ad-card {
-  padding: 0.85rem;
-  background:
-    linear-gradient(135deg, rgba(35,80,212,0.05), transparent 34%),
-    var(--card);
-}
-
-.ad-unit {
-  min-height: 96px;
-  display: grid;
-  place-items: center;
-  border: 1px dashed var(--blue-bd);
-  border-radius: 8px;
-  background: var(--blue-bg);
-  color: var(--text-2);
-  text-align: center;
-  overflow: hidden;
-}
-
-.ad-unit.compact { min-height: 74px; }
-
-.ad-fallback {
-  padding: 0.85rem;
-  max-width: 720px;
-}
-
-.ad-eyebrow {
-  display: block;
-  margin-bottom: 0.18rem;
-  font-size: 0.58rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--blue);
-}
-
-.ad-title {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.ad-copy {
-  margin-top: 0.22rem;
-  font-size: 0.7rem;
-  line-height: 1.5;
-  color: var(--text-2);
-}
-
 .support-card {
   display: grid;
   gap: 0.85rem;
@@ -1155,17 +1105,6 @@ input[type="range"]::-moz-range-thumb {
   </div>
 </div>
 
-<!-- ══ SPONSOR / AD SLOT ══ -->
-<aside class="card ad-card" aria-label="Advertentie">
-  <div class="ad-unit compact" data-ad-slot="top">
-    <div class="ad-fallback">
-      <span class="ad-eyebrow" data-i18n="adEyebrow">Advertentie</span>
-      <div class="ad-title" data-i18n="adTopTitle">Bereik Nederlanders met studieschuld</div>
-      <p class="ad-copy" data-i18n="adTopCopy">Deze plek is gereserveerd voor relevante sponsors. Geen tracking-advertenties totdat de site een echte advertentiepartner en privacybeleid heeft.</p>
-    </div>
-  </div>
-</aside>
-
 <!-- ══ CARD 1: INCOME ══ -->
 <div class="card">
   <div class="income-header">
@@ -1496,16 +1435,6 @@ input[type="range"]::-moz-range-thumb {
   </div>
 </section>
 
-<aside class="card ad-card" aria-label="Advertentie">
-  <div class="ad-unit" data-ad-slot="bottom">
-    <div class="ad-fallback">
-      <span class="ad-eyebrow" data-i18n="adEyebrow">Advertentie</span>
-      <div class="ad-title" data-i18n="adBottomTitle">Sponsor een nuttige financiële tool</div>
-      <p class="ad-copy" data-i18n="adBottomCopy">Voor productie: vul je Google AdSense publisher ID en slot IDs in, of vervang dit door directe sponsorplaatsingen.</p>
-    </div>
-  </div>
-</aside>
-
 </div><!-- /page -->
 
 <script>
@@ -1513,22 +1442,6 @@ input[type="range"]::-moz-range-thumb {
 //  I18N  (bilingual NL / EN — NL default, persisted)
 // ─────────────────────────────────────────────────────
 let LANG = (localStorage.getItem('sf35lang') === 'en') ? 'en' : 'nl';
-
-// ── Monetization setup ───────────────────────────────
-// To enable real Google AdSense revenue:
-// 1) Set enabled: true.
-// 2) Replace adsenseClient with your publisher ID, e.g. ca-pub-1234567890123456.
-// 3) Replace the slot IDs with the ad unit IDs from your AdSense account.
-// Until then, the page shows direct-sponsor fallback placements and the support link.
-const MONETIZATION = {
-  enabled: false,
-  adsenseClient: 'ca-pub-5255329257236286',
-  slots: {
-    top: '0000000000',
-    bottom: '0000000000',
-  },
-  coffeeUrl: 'https://buymeacoffee.com/larso',
-};
 
 const FEEDBACK = {
   formUrl: 'https://tally.so/r/81M5oo',
@@ -1609,11 +1522,6 @@ const I18N = {
     footerHdr: 'Bronnen en disclaimer',
     footerDisclaimer: 'Deze calculator is uitsluitend bedoeld als rekenmodel voor inzicht en scenario-analyse. Het vormt geen juridisch of financieel advies. Controleer altijd via Mijn DUO voor je actuele schuld, rente en maandbedrag. De toekomstige rente na de huidige vergrendelingsperiode is onbekend; de calculator gebruikt 2,33% (gepubliceerd SF35 tarief 2026) als scenario-aanname.',
     footerOpen: 'Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" rel="noopener" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>',
-    adEyebrow: 'Advertentie',
-    adTopTitle: 'Bereik Nederlanders met studieschuld',
-    adTopCopy: 'Deze plek is gereserveerd voor relevante sponsors. Geen tracking-advertenties totdat de site een echte advertentiepartner en privacybeleid heeft.',
-    adBottomTitle: 'Sponsor een nuttige financiële tool',
-    adBottomCopy: 'Voor productie: vul je Google AdSense publisher ID en slot IDs in, of vervang dit door directe sponsorplaatsingen.',
     supportKicker: 'Onafhankelijk project',
     supportTitle: 'Help deze calculator actueel houden',
     supportCopy: 'DUO-regels, rentepercentages en box-3-aannames veranderen. Een kleine bijdrage helpt met onderhoud, hosting en updates.',
@@ -1625,8 +1533,7 @@ const I18N = {
     feedbackPrivacy: 'De knop opent een kort Tally-formulier. Voeg daar feedback, context en eventueel screenshots toe.',
     feedbackButton: 'Feedback sturen',
     feedbackTallyNote: 'Opent het feedbackformulier in een nieuw tabblad. Je kunt daar ook screenshots toevoegen.',
-    footerMonetization: 'Deze site kan advertenties, sponsorvermeldingen en ondersteuningslinks tonen. Gebruik alleen financiële producten die je zelf begrijpt; advertenties zijn geen advies of aanbeveling.',
-    footerPrivacy: 'Privacy: de calculator draait lokaal in je browser. De site verstuurt je ingevulde bedragen niet naar een eigen server. Schakel je AdSense of analytics in, publiceer dan ook een volwaardig cookie- en privacybeleid.',
+    footerPrivacy: 'Privacy: de calculator draait lokaal in je browser. De site verstuurt je ingevulde bedragen niet naar een eigen server en toont geen advertenties of tracking.',
 
     // ── dynamic (functions)
     sliderTick: p => `drempel ${p.v}`,
@@ -1791,11 +1698,6 @@ const I18N = {
     footerHdr: 'Sources and disclaimer',
     footerDisclaimer: 'This calculator is intended solely as a model for insight and scenario analysis. It does not constitute legal or financial advice. Always check Mijn DUO for your actual debt, rate and monthly amount. The future rate after the current lock period is unknown; the calculator uses 2.33% (the published SF35 rate for 2026) as a scenario assumption.',
     footerOpen: 'Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" rel="noopener" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>',
-    adEyebrow: 'Advertisement',
-    adTopTitle: 'Reach Dutch student-loan borrowers',
-    adTopCopy: 'This space is reserved for relevant sponsors. No tracking ads are loaded until the site has a real ad partner and privacy policy.',
-    adBottomTitle: 'Sponsor a useful financial tool',
-    adBottomCopy: 'For production: add your Google AdSense publisher ID and slot IDs, or replace this with direct sponsorship placements.',
     supportKicker: 'Independent project',
     supportTitle: 'Help keep this calculator current',
     supportCopy: 'DUO rules, interest rates and box-3 assumptions change. A small contribution helps with maintenance, hosting and updates.',
@@ -1807,8 +1709,7 @@ const I18N = {
     feedbackPrivacy: 'The button opens a short Tally form. Add feedback, context and screenshots there.',
     feedbackButton: 'Send feedback',
     feedbackTallyNote: 'Opens the feedback form in a new tab. You can also add screenshots there.',
-    footerMonetization: 'This site may show ads, sponsor mentions and support links. Only use financial products you understand yourself; ads are not advice or recommendations.',
-    footerPrivacy: 'Privacy: the calculator runs locally in your browser. The site does not send entered amounts to its own server. If you enable AdSense or analytics, also publish a proper cookie and privacy policy.',
+    footerPrivacy: 'Privacy: the calculator runs locally in your browser. The site does not send entered amounts to its own server and shows no ads or tracking.',
 
     // ── dynamic (functions)
     sliderTick: p => `threshold ${p.v}`,
@@ -1915,47 +1816,6 @@ function applyI18n() {
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
   const tg = document.getElementById('langToggle');
   if (tg) tg.textContent = (LANG === 'nl') ? 'EN' : 'NL';
-}
-
-function setupMonetization() {
-  const coffeeLink = document.getElementById('coffeeLink');
-  if (coffeeLink) coffeeLink.href = MONETIZATION.coffeeUrl;
-
-  const hasRealAds =
-    MONETIZATION.enabled &&
-    /^ca-pub-\d{16}$/.test(MONETIZATION.adsenseClient) &&
-    Object.values(MONETIZATION.slots).every(slot => /^\d+$/.test(slot) && !/^0+$/.test(slot));
-
-  if (!hasRealAds) return;
-
-  const adScriptSrc = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${MONETIZATION.adsenseClient}`;
-  if (!document.querySelector(`script[src="${adScriptSrc}"]`)) {
-    const adScript = document.createElement('script');
-    adScript.async = true;
-    adScript.crossOrigin = 'anonymous';
-    adScript.src = adScriptSrc;
-    document.head.appendChild(adScript);
-  }
-
-  document.querySelectorAll('[data-ad-slot]').forEach(unit => {
-    const key = unit.dataset.adSlot;
-    const slot = MONETIZATION.slots[key];
-    if (!slot) return;
-    unit.innerHTML = '';
-    const ad = document.createElement('ins');
-    ad.className = 'adsbygoogle';
-    ad.style.display = 'block';
-    ad.dataset.adClient = MONETIZATION.adsenseClient;
-    ad.dataset.adSlot = slot;
-    ad.dataset.adFormat = 'auto';
-    ad.dataset.fullWidthResponsive = 'true';
-    unit.appendChild(ad);
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (_) {
-      unit.innerHTML = `<div class="ad-fallback"><span class="ad-eyebrow">${t('adEyebrow')}</span><div class="ad-title">${t('adBottomTitle')}</div><p class="ad-copy">${t('adBottomCopy')}</p></div>`;
-    }
-  });
 }
 
 function setupFeedback() {
@@ -2830,7 +2690,6 @@ document.getElementById('langToggle').addEventListener('click', () => {
 // ─────────────────────────────────────────────────────
 function init() {
   applyI18n();
-  setupMonetization();
   setupFeedback();
   updateAll();
   // Set initial tab track position after layout
@@ -2857,18 +2716,14 @@ window.addEventListener('resize', refreshTabTrack);
     Deze calculator is uitsluitend bedoeld als rekenmodel voor inzicht en scenario-analyse. Het vormt geen juridisch of financieel advies. Controleer altijd via Mijn DUO voor je actuele schuld, rente en maandbedrag.
     De toekomstige rente na de huidige vergrendelingsperiode is onbekend; de calculator gebruikt 2,33% (gepubliceerd SF35 tarief 2026) als scenario-aanname.
   </p>
-  <p style="margin-top:0.4rem" data-i18n="footerMonetization">
-    Deze site kan advertenties, sponsorvermeldingen en ondersteuningslinks tonen. Gebruik alleen financiële producten die je zelf begrijpt; advertenties zijn geen advies of aanbeveling.
-  </p>
   <p style="margin-top:0.4rem" data-i18n="footerPrivacy">
-    Privacy: de calculator draait lokaal in je browser. De site verstuurt je ingevulde bedragen niet naar een eigen server. Schakel je AdSense of analytics in, publiceer dan ook een volwaardig cookie- en privacybeleid.
+    Privacy: de calculator draait lokaal in je browser. De site verstuurt je ingevulde bedragen niet naar een eigen server en toont geen advertenties of tracking.
   </p>
   <p style="margin-top:0.4rem" data-i18n-html="footerOpen">
     Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" rel="noopener" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>
   </p>
   <p style="margin-top:0.4rem">
-    <a href="./privacy.html" style="color:#2350d4">Privacybeleid / Privacy policy</a> ·
-    <a href="./ads.txt" style="color:#2350d4">ads.txt</a>
+    <a href="./privacy.html" style="color:#2350d4">Privacybeleid / Privacy policy</a>
   </p>
 </footer>
 </body>

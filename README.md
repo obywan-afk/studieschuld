@@ -7,7 +7,7 @@ An interactive Dutch student loan (SF35 leenstelsel) calculator — open in any 
 ## What it does
 
 - **Bilingual NL / EN** — toggle in the header, preference saved in the browser
-- **Monetization-ready** — sponsor/ad placements, support link, feedback flow, privacy page, `ads.txt`, `robots.txt`, and sitemap
+- **No ads, no tracking** — optional Buy-Me-a-Coffee support link, feedback flow, privacy page, `robots.txt`, and sitemap
 - Calculates your monthly DUO payment (draagkracht vs wettelijk maandbedrag)
 - Shows 35-year debt trajectory under three scenarios
 - Models the ETF investment strategy (invest the freed-up amount instead of over-paying DUO)
@@ -31,26 +31,28 @@ An interactive Dutch student loan (SF35 leenstelsel) calculator — open in any 
 | Kwijtschelding | Automatic after 35 years (Art. 6.16 lid 1 WSF 2000) |
 | Aflosvrije periode | Max 60 months, extends end date 1:1 |
 
-## Monetization setup
+## Monetization
 
-The site includes the AdSense verification script for `ca-pub-5255329257236286`. Manual display ad placements still require live ad unit slot IDs:
+**Status: removed / parked.** The site currently ships **no ads and no tracking**. The earlier AdSense + sponsor-placeholder layer was pulled because it was only a placeholder — there is no verified ad partner and no cookie-consent flow yet. Shipping a "Advertentie / this space is reserved" box and loading the AdSense script before any of that exists added a third-party tracker for nothing.
 
-1. Apply for Google AdSense, or sell direct sponsorships.
-2. In `index.html`, update the `MONETIZATION` constant:
-   - set `enabled: true`
-   - replace the `top` and `bottom` slot IDs with real AdSense ad unit IDs
-   - update `coffeeUrl` if your Buy Me a Coffee username differs
-3. Make sure `ads.txt` is published at the domain root with `pub-5255329257236286`.
-4. Keep `privacy.html` published and update it before enabling analytics, personalized ads, or any cookie-based tools.
+What was removed (commit history has the full implementation at `f4d8343` if you want to restore it):
 
-Until those IDs are real, the page shows non-tracking sponsor placeholders and the support link.
+- the two `ad-card` placeholder `<aside>` blocks (top + bottom)
+- the AdSense loader `<script>` in `<head>` and in `privacy.html`
+- the `MONETIZATION` config object and `setupMonetization()` in `index.html`
+- the `ad*` i18n strings and the `footerMonetization` footer line
+- `ads.txt`
 
-## Revenue options
+What stays: the voluntary **Buy Me a Coffee** support card, the feedback flow, `privacy.html`, `robots.txt`, and `sitemap.xml`.
 
-- **Buy Me a Coffee:** easiest to launch, works immediately, but depends on goodwill.
-- **Direct sponsorships:** best early revenue if the site has a niche audience. Replace the fallback ad copy with a sponsor placement once sold.
-- **Google AdSense:** easiest automated ads after approval, but meaningful earnings usually require steady traffic.
-- **Affiliate links:** possible, but avoid anything that makes the calculator look like financial advice. Clearly disclose affiliate relationships.
+### Before re-enabling ads
+
+1. Have a real ad partner (approved Google AdSense account with live ad-unit slot IDs, or a signed direct sponsor).
+2. Add a proper cookie-consent banner and update `privacy.html` **before** any tracking script loads.
+3. Re-add `ads.txt` at the domain root with your real publisher ID.
+4. Only then restore the placements (see `f4d8343`).
+
+Lower-friction alternatives that need none of the above: the existing **Buy Me a Coffee** link, or **direct sponsorships** disclosed inline. Avoid anything that makes the calculator look like financial advice.
 
 ## Feedback collection
 

@@ -1,2 +1,0 @@
-# Keep this file at https://studieschuld.help/ads.txt.
-google.com, pub-5255329257236286, DIRECT, f08c47fec0942fa0
