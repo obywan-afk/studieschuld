@@ -25,11 +25,14 @@
   --text-2:    #a7a39c;
   --text-3:    #6f6c66;
   --ink:       #0a0a0a;   /* black text on saturated color */
+  --ink-soft:  rgba(10,10,10,0.62);  /* secondary text on color */
   /* accents are brightened vs. the surface palette so they read on black */
   --blue:      #6f8cff;  --blue-bg:  rgba(76,111,255,0.15);  --blue-bd:  rgba(76,111,255,0.42);
   --green:     #3ddc84;  --green-bg: rgba(37,192,105,0.15);  --green-bd: rgba(37,192,105,0.42);
   --amber:     #ffb23a;  --amber-bg: rgba(255,178,58,0.15);  --amber-bd: rgba(255,178,58,0.42);
   --red:       #ff6a4d;  --red-bg:   rgba(255,106,77,0.15);
+  --lime:      #8fe34a;   /* opportunity (ETF) */
+  --bone:      #ece7dd;   /* warm light tile */
   --mono:      'SF Mono', 'Fira Code', monospace;
 }
 
@@ -356,8 +359,13 @@ input[type="range"]::-moz-range-thumb {
 /* Hero */
 .hero {
   text-align: left;
-  padding: 1.2rem 1.2rem 1.3rem;
-  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.6rem;
+  min-height: 150px;
+  padding: 1.25rem 1.3rem 1.35rem;
+  border-radius: 18px;
   background: var(--panel-2);
   color: var(--text);
   transition: background 0.3s ease, color 0.3s ease;
@@ -378,12 +386,12 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .hero-num {
-  font-size: clamp(2.7rem, 9vw, 3.5rem);
+  font-size: clamp(2.9rem, 9vw, 4rem);
   font-weight: 800;
-  line-height: 0.9;
+  line-height: 0.88;
   font-variant-numeric: tabular-nums;
   color: inherit;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.045em;
 }
 
 .hero-tag {
@@ -442,9 +450,8 @@ input[type="range"]::-moz-range-thumb {
 
 /* Strategy bar */
 .strat {
-  margin-top: 0.85rem;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+  padding: 0.85rem 1.1rem;
+  border-radius: 16px;
   border: 1px solid transparent;
   font-size: 0.78rem;
   line-height: 1.6;
@@ -456,48 +463,92 @@ input[type="range"]::-moz-range-thumb {
 .strat-icon { font-size: 0.95rem; flex-shrink: 0; margin-top: 0.1rem; }
 
 /* Stats strip */
-.stats {
+/* ══════════════
+   RESULT BENTO
+══════════════ */
+.bento {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
-  margin-top: 0.85rem;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
 }
-@media(min-width:600px){ .stats { grid-template-columns: repeat(4, 1fr); } }
-.stat-box {
-  padding: 0.85rem 0.85rem 0.9rem;
-  text-align: left;
+@media(min-width:560px){
+  .bento { grid-template-columns: repeat(2, 1fr); }
+  #hero, .bento .span2, .bento .span4 { grid-column: 1 / -1; }
+}
+@media(min-width:860px){
+  .bento { grid-template-columns: repeat(4, 1fr); }
+  #hero { grid-column: span 2; grid-row: span 2; }
+  .bento .span2 { grid-column: span 2; }
+  .bento .span4 { grid-column: span 4; }
+}
+
+.tile {
+  border-radius: 18px;
+  padding: 1.1rem 1.15rem;
   background: var(--panel-2);
-  border-radius: 13px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 92px;
+  transition: background 0.25s ease, color 0.25s ease;
 }
-.stat-val {
-  font-size: 1.3rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.025em;
-  line-height: 1;
-  color: var(--text);
-}
-.stat-lbl {
-  font-size: 0.57rem;
+.tile .t-lbl {
+  font-size: 0.6rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
   color: var(--text-3);
-  margin-top: 0.45rem;
-  line-height: 1.3;
 }
-.stat-sub {
-  font-size: 0.58rem;
+.tile .t-num {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  margin-top: auto;
+  padding-top: 0.6rem;
+  color: var(--text);
+}
+.tile .t-sub {
+  font-size: 0.6rem;
+  font-weight: 600;
   color: var(--text-3);
-  margin-top: 0.15rem;
-  line-height: 1.3;
+  margin-top: 0.3rem;
+  line-height: 1.35;
 }
+/* colored tiles → black ink */
+.tile.c { color: var(--ink); }
+.tile.c .t-lbl, .tile.c .t-sub { color: var(--ink-soft); }
+.tile.c .t-num { color: var(--ink); }
+.t-lime  { background: var(--lime); }
+.t-red   { background: var(--red); }
+.t-green { background: var(--green); }
+.t-blue  { background: var(--blue); }
+.t-amber { background: var(--amber); }
+.t-bone  { background: var(--bone); }
+
+/* donut tile */
+.donut-wrap { display: flex; align-items: center; gap: 0.85rem; margin-top: auto; padding-top: 0.6rem; }
+.donut {
+  width: 66px; height: 66px; border-radius: 50%;
+  flex-shrink: 0;
+  display: grid; place-items: center;
+  background: conic-gradient(var(--blue) calc(var(--p, 0) * 1%), rgba(255,255,255,0.10) 0);
+}
+.donut-hole {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--panel-2);
+  display: grid; place-items: center;
+  font-weight: 800; font-size: 0.82rem; font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.donut-side { min-width: 0; }
+.donut-side .t-num { margin: 0; padding: 0; font-size: 1.25rem; }
 
 /* ── DRAAGKRACHT BREAKDOWN ── */
 .dk-explainer {
-  margin-top: 0.85rem;
   border: 1px solid var(--card-bd);
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
 }
 
@@ -1228,18 +1279,52 @@ input[type="range"]::-moz-range-thumb {
   </div>
 </div>
 
-<!-- ══ CARD 2: RESULT ══ -->
+<!-- ══ CARD 2: RESULT (bento dashboard) ══ -->
 <div class="card">
-  <div class="result-layout">
-    <!-- Hero -->
+  <div class="bento">
+
+    <!-- Hero: what you pay — colour = your situation -->
     <div class="hero" id="hero">
       <div class="hero-lbl" data-i18n="heroLbl">Te betalen / maand</div>
-      <div class="hero-num" id="heroNum">—</div>
-      <div class="hero-tag" id="heroTag">—</div>
+      <div>
+        <div class="hero-num" id="heroNum">—</div>
+        <div class="hero-tag" id="heroTag">—</div>
+      </div>
     </div>
 
-    <!-- Comparison -->
-    <div class="comp">
+    <!-- ETF room (the opportunity) -->
+    <div class="tile c t-lime">
+      <div class="t-lbl" data-i18n="statEtfLbl">ETF-ruimte / mnd</div>
+      <div class="t-num" id="statEtf">—</div>
+    </div>
+
+    <!-- Debt growth (colour set by JS: red = grows, green = shrinks) -->
+    <div class="tile c" id="growthTile">
+      <div class="t-lbl" data-i18n="statGroeiLbl">Schuldgroei / mnd</div>
+      <div class="t-num" id="statGroei">—</div>
+      <div class="t-sub" id="statGroeiSub"></div>
+    </div>
+
+    <!-- Interest / month (light tile) -->
+    <div class="tile c t-bone">
+      <div class="t-lbl" data-i18n="statRenteLbl">Rente / maand</div>
+      <div class="t-num" id="statRente">—</div>
+    </div>
+
+    <!-- End debt + repaid/forgiven donut -->
+    <div class="tile" id="endTile">
+      <div class="t-lbl" id="statEindLbl">Schuld na 35 jr</div>
+      <div class="donut-wrap">
+        <div class="donut" id="donut"><div class="donut-hole" id="donutPct">—</div></div>
+        <div class="donut-side">
+          <div class="t-num" id="statEind">—</div>
+          <div class="t-sub" id="statEindSub"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison: capacity vs statutory -->
+    <div class="comp span2">
       <div class="comp-row" id="rowDk">
         <div class="comp-left">
           <div class="comp-name">
@@ -1261,10 +1346,9 @@ input[type="range"]::-moz-range-thumb {
         <div class="comp-amt" id="amtWm">—</div>
       </div>
     </div>
-  </div>
 
   <!-- Draagkracht live breakdown -->
-  <div class="dk-explainer" id="dkExplainer">
+  <div class="dk-explainer span2" id="dkExplainer">
     <div class="dk-title" data-i18n="dkTitle">Draagkracht — live berekening</div>
 
     <div class="dk-step">
@@ -1302,33 +1386,13 @@ input[type="range"]::-moz-range-thumb {
     </details>
   </div>
 
-  <!-- Strategy bar -->
-  <div class="strat" id="strat">
+  <!-- Strategy insight (full width) -->
+  <div class="strat span4" id="strat">
     <span class="strat-icon" id="stratIcon">💡</span>
     <span id="stratText"></span>
   </div>
 
-  <!-- Stats strip -->
-  <div class="stats">
-    <div class="stat-box">
-      <div class="stat-val" id="statRente">—</div>
-      <div class="stat-lbl" data-i18n="statRenteLbl">Rente / maand</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-val" id="statGroei">—</div>
-      <div class="stat-lbl" data-i18n="statGroeiLbl">Schuldgroei / mnd</div>
-      <div class="stat-sub" id="statGroeiSub"></div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-val" id="statEtf">—</div>
-      <div class="stat-lbl" data-i18n="statEtfLbl">ETF-ruimte / mnd</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-val" id="statEind">—</div>
-      <div class="stat-lbl" id="statEindLbl">Schuld na 35 jr</div>
-      <div class="stat-sub" id="statEindSub"></div>
-    </div>
-  </div>
+  </div><!-- /bento -->
 </div>
 
 <!-- ══ CARD: SMART SIGNALS ══ -->
@@ -2155,22 +2219,31 @@ function updateCalc() {
   // ── Stats
   document.getElementById('statRente').textContent = fmt(interest);
 
-  const groei = Math.abs(netto);
-  document.getElementById('statGroei').textContent = (netto > 0 ? '+' : '−') + fmt(groei);
-  document.getElementById('statGroei').style.color = netto <= 0 ? 'var(--red)' : 'var(--green)';
+  const groei   = Math.abs(netto);
+  const growing = netto <= 0; // debt grows when interest outpaces payment
+  document.getElementById('statGroei').textContent = (growing ? '+' : '−') + fmt(groei);
+  // colour the whole tile (semantic): red = growing, green = shrinking
+  document.getElementById('growthTile').className = 'tile c ' + (growing ? 't-red' : 't-green');
   document.getElementById('statGroeiSub').textContent =
-    netto <= 0
+    growing
       ? t('groeiUp',   { g: fmt(groei) })
       : t('groeiDown', { g: fmt(groei) });
 
   document.getElementById('statEtf').textContent = fmt(etfRoom);
 
-  // ── Eindsaldo stat — run a quick simulation to get the final debt
-  const { finalDebt } = simulate(ink, schuld, rente, jaren, drempel);
+  // ── Eindsaldo + repaid/forgiven donut — quick simulation for final debt
+  const { finalDebt, totalPaid } = simulate(ink, schuld, rente, jaren, drempel);
   const eindEl  = document.getElementById('statEind');
   const eindSub = document.getElementById('statEindSub');
   document.getElementById('statEindLbl').textContent = t('eindLbl', { jaren });
   ticker(eindEl, finalDebt);
+
+  // donut shows the share of the total obligation that is written off
+  const totalOblig  = totalPaid + finalDebt;
+  const forgivenPct = totalOblig > 0 ? Math.round(finalDebt / totalOblig * 100) : 0;
+  document.getElementById('donut').style.setProperty('--p', forgivenPct);
+  document.getElementById('donutPct').textContent = forgivenPct + '%';
+
   if (finalDebt < 1) {
     eindEl.style.color  = 'var(--green)';
     eindSub.textContent = t('eindPaid');
