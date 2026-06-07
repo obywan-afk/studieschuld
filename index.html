@@ -545,6 +545,43 @@ input[type="range"]::-moz-range-thumb {
 .donut-side { min-width: 0; }
 .donut-side .t-num { margin: 0; padding: 0; font-size: 1.25rem; }
 
+/* ══════════════
+   JOURNEY STEPS
+══════════════ */
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin: 1.9rem 0.25rem 0.8rem;
+}
+.step:first-of-type { margin-top: 0.5rem; }
+.step-no {
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--text);
+  color: var(--ink);
+  font-weight: 800; font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  display: grid; place-items: center;
+  margin-top: 0.1rem;
+}
+.step-h {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text);
+}
+.step-d {
+  font-size: 0.82rem;
+  color: var(--text-2);
+  margin-top: 0.2rem;
+  line-height: 1.45;
+  max-width: 60ch;
+}
+@media(min-width:600px){ .step-h { font-size: 1.35rem; } }
+
 /* ── DRAAGKRACHT BREAKDOWN ── */
 .dk-explainer {
   border: 1px solid var(--card-bd);
@@ -1155,6 +1192,15 @@ input[type="range"]::-moz-range-thumb {
   </div>
 </div>
 
+<!-- ══ STEP 1 ══ -->
+<div class="step">
+  <div class="step-no">1</div>
+  <div>
+    <div class="step-h" data-i18n="step1H">Je situatie</div>
+    <div class="step-d" data-i18n="step1D">Vul je inkomen en leninggegevens in — de rest rekenen we live uit.</div>
+  </div>
+</div>
+
 <!-- ══ CARD 1: INCOME ══ -->
 <div class="card">
   <div class="income-header">
@@ -1276,6 +1322,15 @@ input[type="range"]::-moz-range-thumb {
     <div class="field" style="grid-column:1/-1">
       <p style="margin-top:0;font-size:0.67rem;color:var(--text-3)" data-i18n-html="noteBox3">Box-3 aanname (2026): vrijstelling €57.684 p.p., forfaitair rendement 6,04%, tarief 36% → effectief ~2,17%/jr boven de vrijstelling. Het nieuwe box-3 stelsel op basis van werkelijk rendement wordt ~2028 verwacht — dit is een aanname.</p>
     </div>
+  </div>
+</div>
+
+<!-- ══ STEP 2 ══ -->
+<div class="step">
+  <div class="step-no">2</div>
+  <div>
+    <div class="step-h" data-i18n="step2H">Wat je betaalt</div>
+    <div class="step-d" data-i18n="step2D">Je maandbedrag, hoe het is opgebouwd, en wat je schuld doet.</div>
   </div>
 </div>
 
@@ -1401,6 +1456,15 @@ input[type="range"]::-moz-range-thumb {
   <div id="signals"></div>
 </div>
 
+<!-- ══ STEP 3 ══ -->
+<div class="step">
+  <div class="step-no">3</div>
+  <div>
+    <div class="step-h" data-i18n="step3H">Je schuld over 35 jaar</div>
+    <div class="step-d" data-i18n="step3D">Hoe je schuld zich ontwikkelt — en wat minimaal betalen + beleggen oplevert.</div>
+  </div>
+</div>
+
 <!-- ══ CARD 3: CHARTS ══ -->
 <div class="card">
   <div class="tabs-wrap">
@@ -1515,6 +1579,12 @@ const I18N = {
     // ── header / intro
     appTitle: 'DUO SF35 Studieschuld Calculator',
     appSubtitle: 'Bereken je maandelijkse verplichting, schuldontwikkeling en strategie · voor iedereen met een SF35-lening (leenstelsel, na 2015)',
+    step1H: 'Je situatie',
+    step1D: 'Vul je inkomen en leninggegevens in — de rest rekenen we live uit.',
+    step2H: 'Wat je betaalt',
+    step2D: 'Je maandbedrag, hoe het is opgebouwd, en wat je schuld doet.',
+    step3H: 'Je schuld over 35 jaar',
+    step3D: 'Hoe je schuld zich ontwikkelt — en wat minimaal betalen + beleggen oplevert.',
     introP1: 'Deze calculator helpt je begrijpen hoeveel je maandelijks aan DUO betaalt, hoe je schuld zich ontwikkelt over 35 jaar, en wat de strategie "minimaal betalen + investeren" concreet oplevert.',
     introP2: '<strong>Vul in:</strong> je bruto jaarinkomen (slider) en je eigen schuldgegevens via <em>Pas schuld, rente, looptijd aan</em>. Alle waarden vind je in <a href="https://mijn.duo.nl" target="_blank" rel="noopener" style="color:var(--blue)">Mijn DUO</a>.',
     introQ1: 'Wat is het SF35 leenstelsel?',
@@ -1691,6 +1761,12 @@ const I18N = {
     // ── header / intro
     appTitle: 'DUO SF35 Student Loan Calculator',
     appSubtitle: 'Calculate your monthly obligation, debt trajectory and strategy · for anyone with an SF35 loan (Dutch "leenstelsel", post-2015)',
+    step1H: 'Your situation',
+    step1D: 'Enter your income and loan details — we work out the rest live.',
+    step2H: 'What you pay',
+    step2D: 'Your monthly amount, how it is built up, and what your debt does.',
+    step3H: 'Your debt over 35 years',
+    step3D: 'How your debt evolves — and what paying the minimum + investing yields.',
     introP1: 'This calculator helps you understand how much you pay DUO each month, how your debt evolves over 35 years, and what the "pay the minimum + invest" strategy concretely yields.',
     introP2: '<strong>Enter:</strong> your gross annual income (slider) and your own loan details via <em>Adjust debt, rate, term</em>. You can find all values in <a href="https://mijn.duo.nl" target="_blank" rel="noopener" style="color:var(--blue)">Mijn DUO</a>.',
     introQ1: 'What is the SF35 loan system?',
