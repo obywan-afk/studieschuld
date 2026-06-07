@@ -6,7 +6,7 @@
 <title>DUO Studieschuld Calculator</title>
 <meta name="description" content="Bereken je DUO SF35 studieschuld, maandbedrag, kwijtschelding en investeringsscenario's met een interactieve Nederlandse calculator.">
 <meta name="robots" content="index, follow">
-<meta name="theme-color" content="#eeecea">
+<meta name="theme-color" content="#000000">
 <link rel="canonical" href="https://studieschuld.help/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="DUO SF35 Studieschuld Calculator">
@@ -16,23 +16,20 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root {
-  --canvas:    #eeecea;
-  --card:      #ffffff;
-  --card-bd:   #e2dfd8;
-  --text:      #1a1917;
-  --text-2:    #706d67;
-  --text-3:    #a39f99;
-  --blue:      #2350d4;
-  --blue-bg:   #f0f3fe;
-  --blue-bd:   #c3cefc;
-  --green:     #1a7a47;
-  --green-bg:  #f0faf4;
-  --green-bd:  #7fcca8;
-  --amber:     #b85c0c;
-  --amber-bg:  #fff8f0;
-  --amber-bd:  #f5c480;
-  --red:       #c0270f;
-  --red-bg:    #fff2f0;
+  /* ── Bold Modern (dark) — tokens mirror design-system.html ── */
+  --canvas:    #000000;   /* true-black canvas */
+  --card:      #141414;   /* panel card on black */
+  --panel-2:   #1e1e1e;   /* nested / raised surface */
+  --card-bd:   rgba(255,255,255,0.09);
+  --text:      #f6f5f2;
+  --text-2:    #a7a39c;
+  --text-3:    #6f6c66;
+  --ink:       #0a0a0a;   /* black text on saturated color */
+  /* accents are brightened vs. the surface palette so they read on black */
+  --blue:      #6f8cff;  --blue-bg:  rgba(76,111,255,0.15);  --blue-bd:  rgba(76,111,255,0.42);
+  --green:     #3ddc84;  --green-bg: rgba(37,192,105,0.15);  --green-bd: rgba(37,192,105,0.42);
+  --amber:     #ffb23a;  --amber-bg: rgba(255,178,58,0.15);  --amber-bd: rgba(255,178,58,0.42);
+  --red:       #ff6a4d;  --red-bg:   rgba(255,106,77,0.15);
   --mono:      'SF Mono', 'Fira Code', monospace;
 }
 
@@ -54,7 +51,7 @@ body {
 .card {
   background: var(--card);
   border: 1px solid var(--card-bd);
-  border-radius: 12px;
+  border-radius: 18px;
   padding: 1.25rem;
   margin-bottom: 0.85rem;
   opacity: 0;
@@ -107,9 +104,9 @@ header {
 }
 #langToggle:hover { background: var(--blue-bg); border-color: var(--blue-bd); color: var(--blue); }
 header h1 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   color: var(--text);
 }
 header p {
@@ -124,10 +121,10 @@ header p {
 /* ── LABEL STYLE ── */
 .lbl {
   font-size: 0.65rem;
-  font-weight: 600;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--text-3);
+  letter-spacing: 0.09em;
+  color: var(--text-2);
 }
 
 /* ══════════════
@@ -143,12 +140,11 @@ header p {
 }
 
 .income-val {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 800;
   color: var(--blue);
   font-variant-numeric: tabular-nums;
-  font-family: var(--mono);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 @media(min-width:600px){ .income-val { font-size: 2.4rem; } }
 
@@ -218,12 +214,12 @@ input[type="range"]::-moz-range-thumb {
 
 .pill {
   flex-shrink: 0;
-  padding: 0.28rem 0.7rem;
+  padding: 0.32rem 0.8rem;
   border-radius: 999px;
   border: 1px solid var(--card-bd);
-  background: white;
+  background: var(--panel-2);
   font-size: 0.74rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-2);
   cursor: pointer;
   transition: border-color 0.12s, color 0.12s, background 0.12s,
@@ -333,7 +329,7 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 6px;
   font-size: 0.85rem;
   color: var(--text);
-  background: white;
+  background: var(--panel-2);
   outline: none;
   transition: border-color 0.15s;
   font-family: system-ui, -apple-system, sans-serif;
@@ -373,13 +369,12 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .hero-num {
-  font-size: 3.5rem;
+  font-size: 3.6rem;
   font-weight: 800;
-  line-height: 1;
+  line-height: 0.95;
   font-variant-numeric: tabular-nums;
-  font-family: var(--mono);
   color: var(--blue);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
   transition: color 0.25s;
 }
 .hero-num.green  { color: var(--green);  }
@@ -610,7 +605,7 @@ input[type="range"]::-moz-range-thumb {
 .signal.green { background: var(--green-bg); border-color: var(--green-bd); }
 .signal.amber { background: var(--amber-bg); border-color: var(--amber-bd); }
 .signal.blue  { background: var(--blue-bg);  border-color: var(--blue-bd);  }
-.signal.neutral { background: var(--canvas); border-color: var(--card-bd); }
+.signal.neutral { background: var(--panel-2); border-color: var(--card-bd); }
 .signal.green .signal-body strong { color: var(--green); }
 .signal.amber .signal-body strong { color: var(--amber); }
 .signal.blue  .signal-body strong { color: var(--blue);  }
@@ -625,9 +620,9 @@ input[type="range"]::-moz-range-thumb {
 }
 .tabs {
   display: inline-flex;
-  background: var(--canvas);
+  background: var(--panel-2);
   border: 1px solid var(--card-bd);
-  border-radius: 8px;
+  border-radius: 999px;
   padding: 3px;
   position: relative;
   gap: 0;
@@ -640,9 +635,9 @@ input[type="range"]::-moz-range-thumb {
 .tabs-track {
   position: absolute;
   top: 3px; bottom: 3px; left: 3px;
-  border-radius: 5px;
-  background: white;
-  border: 1px solid var(--card-bd);
+  border-radius: 999px;
+  background: var(--text);
+  border: 1px solid transparent;
   transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), width 0.22s cubic-bezier(0.16,1,0.3,1);
   pointer-events: none;
 }
@@ -664,7 +659,7 @@ input[type="range"]::-moz-range-thumb {
   user-select: none;
 }
 .tab-btn:hover { color: var(--text); }
-.tab-btn.active { color: var(--text); font-weight: 600; }
+.tab-btn.active { color: var(--ink); font-weight: 800; }
 .tab-btn:active { transform: scale(0.94); }
 
 /* Tab pane entrance */
@@ -806,17 +801,17 @@ input[type="range"]::-moz-range-thumb {
   min-height: 38px;
   padding: 0.48rem 0.8rem;
   border-radius: 8px;
-  border: 1px solid var(--green-bd);
+  border: 1px solid transparent;
   background: var(--green);
-  color: white;
+  color: var(--ink);
   font-size: 0.78rem;
   font-weight: 800;
   text-decoration: none;
   white-space: nowrap;
-  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), background 0.15s;
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), filter 0.15s;
 }
 
-.support-btn:hover { background: #126538; }
+.support-btn:hover { filter: brightness(0.92); }
 .support-btn:active { transform: scale(0.96); }
 
 .support-link {
@@ -865,7 +860,7 @@ input[type="range"]::-moz-range-thumb {
   width: 100%;
   border: 1px solid var(--card-bd);
   border-radius: 7px;
-  background: white;
+  background: var(--panel-2);
   color: var(--text);
   font: inherit;
   font-size: 0.82rem;
@@ -908,19 +903,19 @@ input[type="range"]::-moz-range-thumb {
   justify-content: center;
   min-height: 38px;
   padding: 0.5rem 0.85rem;
-  border: 1px solid var(--blue);
+  border: 1px solid transparent;
   border-radius: 8px;
   background: var(--blue);
-  color: white;
+  color: var(--ink);
   font-size: 0.78rem;
   font-weight: 800;
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
-  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), background 0.15s;
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), filter 0.15s;
 }
 
-.feedback-submit:hover { background: #183fb4; }
+.feedback-submit:hover { filter: brightness(0.92); }
 .feedback-submit:active { transform: scale(0.96); }
 
 .feedback-note {
@@ -985,7 +980,7 @@ input[type="range"]::-moz-range-thumb {
 .sa-zone-rng  { font-family: var(--mono); font-size: 0.65rem; color: var(--text-3); white-space: nowrap; }
 .sa-zone-you  {
   font-size: 0.6rem; font-weight: 700;
-  background: var(--blue); color: #fff;
+  background: var(--blue); color: var(--ink);
   padding: 0.1rem 0.35rem; border-radius: 3px; white-space: nowrap;
 }
 .sa-zone.zone-active.zone-warn .sa-zone-you { background: var(--amber); }
@@ -1521,7 +1516,7 @@ const I18N = {
     // ── footer
     footerHdr: 'Bronnen en disclaimer',
     footerDisclaimer: 'Deze calculator is uitsluitend bedoeld als rekenmodel voor inzicht en scenario-analyse. Het vormt geen juridisch of financieel advies. Controleer altijd via Mijn DUO voor je actuele schuld, rente en maandbedrag. De toekomstige rente na de huidige vergrendelingsperiode is onbekend; de calculator gebruikt 2,33% (gepubliceerd SF35 tarief 2026) als scenario-aanname.',
-    footerOpen: 'Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" rel="noopener" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>',
+    footerOpen: 'Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" rel="noopener" style="color:#6f8cff">github.com/obywan-afk/studieschuld</a>',
     supportKicker: 'Onafhankelijk project',
     supportTitle: 'Help deze calculator actueel houden',
     supportCopy: 'DUO-regels, rentepercentages en box-3-aannames veranderen. Een kleine bijdrage helpt met onderhoud, hosting en updates.',
@@ -1697,7 +1692,7 @@ const I18N = {
     // ── footer
     footerHdr: 'Sources and disclaimer',
     footerDisclaimer: 'This calculator is intended solely as a model for insight and scenario analysis. It does not constitute legal or financial advice. Always check Mijn DUO for your actual debt, rate and monthly amount. The future rate after the current lock period is unknown; the calculator uses 2.33% (the published SF35 rate for 2026) as a scenario assumption.',
-    footerOpen: 'Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" rel="noopener" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>',
+    footerOpen: 'Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" rel="noopener" style="color:#6f8cff">github.com/obywan-afk/studieschuld</a>',
     supportKicker: 'Independent project',
     supportTitle: 'Help keep this calculator current',
     supportCopy: 'DUO rules, interest rates and box-3 assumptions change. A small contribution helps with maintenance, hosting and updates.',
@@ -2310,7 +2305,7 @@ function buildCurve() {
       ctx.save();
       ctx.beginPath();
       ctx.setLineDash([4, 4]);
-      ctx.strokeStyle = '#2350d4';
+      ctx.strokeStyle = '#6f8cff';
       ctx.lineWidth = 1.5;
       ctx.moveTo(xp, ca.top);
       ctx.lineTo(xp, ca.bottom);
@@ -2325,21 +2320,21 @@ function buildCurve() {
     data: {
       labels: xs,
       datasets: [
-        { label: t('curvePay'), data: payArr, borderColor: '#1a1917', backgroundColor: 'rgba(26,25,23,0.04)', borderWidth: 2.5, fill: true, tension: 0, pointRadius: 0 },
-        { label: t('curveDk'), data: dkArr, borderColor: '#2350d4', borderWidth: 1.5, borderDash: [5,3], fill: false, tension: 0, pointRadius: 0 },
-        { label: t('curveWm', { wm: fmt(wm) }), data: wmArr, borderColor: '#b85c0c', borderWidth: 1.5, borderDash: [7,3], fill: false, tension: 0, pointRadius: 0 },
+        { label: t('curvePay'), data: payArr, borderColor: '#f6f5f2', backgroundColor: 'rgba(246,245,242,0.06)', borderWidth: 2.5, fill: true, tension: 0, pointRadius: 0 },
+        { label: t('curveDk'), data: dkArr, borderColor: '#6f8cff', borderWidth: 1.5, borderDash: [5,3], fill: false, tension: 0, pointRadius: 0 },
+        { label: t('curveWm', { wm: fmt(wm) }), data: wmArr, borderColor: '#ffb23a', borderWidth: 1.5, borderDash: [7,3], fill: false, tension: 0, pointRadius: 0 },
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false, animation: false,
       interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 }, color: '#706d67' } },
+        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 }, color: '#a7a39c' } },
         tooltip: { callbacks: { label: c => `${c.dataset.label}: ${fmt(c.parsed.y)}/mnd` } }
       },
       scales: {
         x: { ticks: { maxTicksLimit: 10, font: { size: 10 }, color: '#a39f99' }, grid: { display: false } },
-        y: { ticks: { callback: v => fmt(v), font: { size: 10 }, color: '#a39f99' }, grid: { color: '#e2dfd8' } }
+        y: { ticks: { callback: v => fmt(v), font: { size: 10 }, color: '#a39f99' }, grid: { color: 'rgba(255,255,255,0.09)' } }
       }
     }
   });
@@ -2401,22 +2396,22 @@ function buildDebt() {
     data: {
       labels,
       datasets: [
-        { label: t('debtMin', { ink: fmt(ink) }), data: r1.pts, borderColor: '#2350d4', backgroundColor: 'rgba(35,80,212,0.06)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0 },
-        { label: t('debtX175', { ink: fmt(ink*1.75) }), data: r2.pts, borderColor: '#7c3aed', borderWidth: 2, borderDash: [5,3], fill: false, tension: 0.3, pointRadius: 0 },
-        { label: t('debtAlways'), data: r3.pts, borderColor: '#1a7a47', borderWidth: 1.5, borderDash: [3,3], fill: false, tension: 0.3, pointRadius: 0 },
-        { label: t('debtEtf', { pct: chosenPct, ink: fmt(ink) }), data: r1.etfPts, borderColor: '#b85c0c', borderWidth: 2.5, borderDash: [6,2], fill: false, tension: 0.3, pointRadius: 0 },
+        { label: t('debtMin', { ink: fmt(ink) }), data: r1.pts, borderColor: '#6f8cff', backgroundColor: 'rgba(111,140,255,0.10)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0 },
+        { label: t('debtX175', { ink: fmt(ink*1.75) }), data: r2.pts, borderColor: '#b49cff', borderWidth: 2, borderDash: [5,3], fill: false, tension: 0.3, pointRadius: 0 },
+        { label: t('debtAlways'), data: r3.pts, borderColor: '#3ddc84', borderWidth: 1.5, borderDash: [3,3], fill: false, tension: 0.3, pointRadius: 0 },
+        { label: t('debtEtf', { pct: chosenPct, ink: fmt(ink) }), data: r1.etfPts, borderColor: '#ffb23a', borderWidth: 2.5, borderDash: [6,2], fill: false, tension: 0.3, pointRadius: 0 },
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false, animation: false,
       interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 }, color: '#706d67' } },
+        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 }, color: '#a7a39c' } },
         tooltip: { callbacks: { label: c => `${c.dataset.label}: ${fmt(c.parsed.y)}` } }
       },
       scales: {
-        x: { title: { display: true, text: t('debtAxisYear'), font: { size: 10 }, color: '#a39f99' }, ticks: { maxTicksLimit: 12, font: { size: 10 }, color: '#a39f99' }, grid: { color: '#e2dfd8' } },
-        y: { ticks: { callback: v => fmt(v), font: { size: 10 }, color: '#a39f99' }, grid: { color: '#e2dfd8' } }
+        x: { title: { display: true, text: t('debtAxisYear'), font: { size: 10 }, color: '#a39f99' }, ticks: { maxTicksLimit: 12, font: { size: 10 }, color: '#a39f99' }, grid: { color: 'rgba(255,255,255,0.09)' } },
+        y: { ticks: { callback: v => fmt(v), font: { size: 10 }, color: '#a39f99' }, grid: { color: 'rgba(255,255,255,0.09)' } }
       }
     }
   });
@@ -2704,13 +2699,13 @@ window.addEventListener('resize', refreshTabTrack);
 </script>
 
 <!-- Footer -->
-<footer style="max-width:960px;margin:2rem auto 0;padding:1.25rem 0.85rem;border-top:1px solid #e2dfd8;font-size:0.68rem;color:#a39f99;line-height:1.6">
-  <p><strong style="color:#706d67" data-i18n="footerHdr">Bronnen en disclaimer</strong></p>
+<footer style="max-width:960px;margin:2rem auto 0;padding:1.25rem 0.85rem;border-top:1px solid rgba(255,255,255,0.09);font-size:0.68rem;color:#a39f99;line-height:1.6">
+  <p><strong style="color:#a7a39c" data-i18n="footerHdr">Bronnen en disclaimer</strong></p>
   <p style="margin-top:0.3rem">
-    <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" rel="noopener" style="color:#2350d4">DUO Terugbetalen</a> ·
-    <a href="https://www.duo.nl/particulier/rente/rente-voor-terugbetalers.jsp" target="_blank" rel="noopener" style="color:#2350d4">DUO Renteoverzicht</a> ·
-    <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" rel="noopener" style="color:#2350d4">WSF 2000 (wetten.overheid.nl)</a> ·
-    <a href="https://mijn.duo.nl" target="_blank" rel="noopener" style="color:#2350d4">Mijn DUO</a>
+    <a href="https://www.duo.nl/particulier/terugbetalen/" target="_blank" rel="noopener" style="color:#6f8cff">DUO Terugbetalen</a> ·
+    <a href="https://www.duo.nl/particulier/rente/rente-voor-terugbetalers.jsp" target="_blank" rel="noopener" style="color:#6f8cff">DUO Renteoverzicht</a> ·
+    <a href="https://wetten.overheid.nl/BWBR0011453" target="_blank" rel="noopener" style="color:#6f8cff">WSF 2000 (wetten.overheid.nl)</a> ·
+    <a href="https://mijn.duo.nl" target="_blank" rel="noopener" style="color:#6f8cff">Mijn DUO</a>
   </p>
   <p style="margin-top:0.4rem" data-i18n="footerDisclaimer">
     Deze calculator is uitsluitend bedoeld als rekenmodel voor inzicht en scenario-analyse. Het vormt geen juridisch of financieel advies. Controleer altijd via Mijn DUO voor je actuele schuld, rente en maandbedrag.
@@ -2720,10 +2715,10 @@ window.addEventListener('resize', refreshTabTrack);
     Privacy: de calculator draait lokaal in je browser. De site verstuurt je ingevulde bedragen niet naar een eigen server en toont geen advertenties of tracking.
   </p>
   <p style="margin-top:0.4rem" data-i18n-html="footerOpen">
-    Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" rel="noopener" style="color:#2350d4">github.com/obywan-afk/studieschuld</a>
+    Open source · <a href="https://github.com/obywan-afk/studieschuld" target="_blank" rel="noopener" style="color:#6f8cff">github.com/obywan-afk/studieschuld</a>
   </p>
   <p style="margin-top:0.4rem">
-    <a href="./privacy.html" style="color:#2350d4">Privacybeleid / Privacy policy</a>
+    <a href="./privacy.html" style="color:#6f8cff">Privacybeleid / Privacy policy</a>
   </p>
 </footer>
 </body>

@@ -6,6 +6,7 @@ An interactive Dutch student loan (SF35 leenstelsel) calculator — open in any 
 
 ## What it does
 
+- **Bold Modern design system** — true-black canvas, saturated accents, heavy display type, tabular numerals. Tokens live in [`design-system.html`](design-system.html) and are mirrored into the calculator (system-ui font — no webfont, no tracking)
 - **Bilingual NL / EN** — toggle in the header, preference saved in the browser
 - **No ads, no tracking** — optional Buy-Me-a-Coffee support link, feedback flow, privacy page, `robots.txt`, and sitemap
 - Calculates your monthly DUO payment (draagkracht vs wettelijk maandbedrag)
