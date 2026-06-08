@@ -48,7 +48,33 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 
-.page { max-width: 960px; margin: 0 auto; }
+.page { max-width: 1140px; margin: 0 auto; }
+
+/* ══════════════
+   TWO-PANE APP
+   inputs (left, sticky) · live output (right)
+══════════════ */
+.app { display: block; }
+.pane { min-width: 0; }
+@media(min-width:980px){
+  .app {
+    display: grid;
+    grid-template-columns: minmax(300px, 350px) 1fr;
+    gap: 1.1rem;
+    align-items: start;
+  }
+  .pane-input {
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    padding-right: 3px;
+  }
+  .pane-input::-webkit-scrollbar { width: 7px; }
+  .pane-input::-webkit-scrollbar-thumb { background: var(--card-bd); border-radius: 4px; }
+}
 
 /* ── PAGE LOAD STAGGER ── */
 .card {
@@ -1192,6 +1218,10 @@ input[type="range"]::-moz-range-thumb {
   </div>
 </div>
 
+<!-- ══ TWO-PANE APP: inputs (left) · live output (right) ══ -->
+<div class="app">
+<aside class="pane pane-input">
+
 <!-- ══ STEP 1 ══ -->
 <div class="step">
   <div class="step-no">1</div>
@@ -1325,6 +1355,10 @@ input[type="range"]::-moz-range-thumb {
   </div>
 </div>
 
+</aside><!-- /pane-input -->
+
+<main class="pane pane-output">
+
 <!-- ══ STEP 2 ══ -->
 <div class="step">
   <div class="step-no">2</div>
@@ -1450,12 +1484,6 @@ input[type="range"]::-moz-range-thumb {
   </div><!-- /bento -->
 </div>
 
-<!-- ══ CARD: SMART SIGNALS ══ -->
-<div class="card" id="signalsCard">
-  <div class="lbl" style="margin-bottom:0.7rem" data-i18n="signalsTitle">Persoonlijke signalen</div>
-  <div id="signals"></div>
-</div>
-
 <!-- ══ STEP 3 ══ -->
 <div class="step">
   <div class="step-no">3</div>
@@ -1470,14 +1498,14 @@ input[type="range"]::-moz-range-thumb {
   <div class="tabs-wrap">
     <div class="tabs" id="tabsContainer">
       <div class="tabs-track" id="tabsTrack"></div>
-      <button class="tab-btn active" data-tab="curve" data-i18n="tabCurve">Betalingscurve</button>
-      <button class="tab-btn" data-tab="debt" data-i18n="tabDebt">Schuld t/m 2060</button>
+      <button class="tab-btn" data-tab="curve" data-i18n="tabCurve">Betalingscurve</button>
+      <button class="tab-btn active" data-tab="debt" data-i18n="tabDebt">Schuld t/m 2060</button>
       <button class="tab-btn" data-tab="scenario" data-i18n="tabScenario">Scenario 2055</button>
     </div>
   </div>
 
   <!-- Tab 1: Payment curve -->
-  <div class="tab-pane active" id="pane-curve">
+  <div class="tab-pane" id="pane-curve">
     <p class="chart-desc" data-i18n="curveDesc">
       Maandbedrag per inkomensniveau. Zwart = wat je betaalt (laagste van twee). Blauw gestippeld = draagkracht. Amber gestippeld = wettelijk. Verticale lijn = jouw inkomen.
     </p>
@@ -1486,7 +1514,7 @@ input[type="range"]::-moz-range-thumb {
   </div>
 
   <!-- Tab 2: Debt trajectory -->
-  <div class="tab-pane" id="pane-debt">
+  <div class="tab-pane active" id="pane-debt">
     <p class="chart-desc" data-i18n="debtDesc">
       Schuldontwikkeling over 35 jaar. Blauw = minimale betalingen (kwijtschelding 2060). Paars = inkomen ×1,75. Groen = altijd wettelijk betalen. Amber = ETF-scenariolijn (aanname: je belegt het vrijgekomen bedrag bruto).
     </p>
@@ -1534,6 +1562,15 @@ input[type="range"]::-moz-range-thumb {
     <div class="sc-footnote" id="scNote"></div>
   </div>
 </div>
+
+<!-- ══ CARD: SMART SIGNALS ══ -->
+<div class="card" id="signalsCard">
+  <div class="lbl" style="margin-bottom:0.7rem" data-i18n="signalsTitle">Persoonlijke signalen</div>
+  <div id="signals"></div>
+</div>
+
+</main><!-- /pane-output -->
+</div><!-- /app -->
 
 <!-- ══ SUPPORT CARD ══ -->
 <aside class="card support-card" aria-label="Steun dit project">
