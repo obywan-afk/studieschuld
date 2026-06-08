@@ -1330,7 +1330,7 @@ input[type="range"]::-moz-range-thumb {
   <div class="step-no">2</div>
   <div>
     <div class="step-h" data-i18n="step2H">Wat je betaalt</div>
-    <div class="step-d" data-i18n="step2D">Je maandbedrag, hoe het is opgebouwd, en wat je schuld doet.</div>
+    <div class="step-d" id="step2Desc" data-i18n="step2D">Je maandbedrag, hoe het is opgebouwd, en wat je schuld doet.</div>
   </div>
 </div>
 
@@ -1461,7 +1461,7 @@ input[type="range"]::-moz-range-thumb {
   <div class="step-no">3</div>
   <div>
     <div class="step-h" data-i18n="step3H">Je schuld over 35 jaar</div>
-    <div class="step-d" data-i18n="step3D">Hoe je schuld zich ontwikkelt — en wat minimaal betalen + beleggen oplevert.</div>
+    <div class="step-d" id="step3Desc" data-i18n="step3D">Hoe je schuld zich ontwikkelt — en wat minimaal betalen + beleggen oplevert.</div>
   </div>
 </div>
 
@@ -1670,6 +1670,16 @@ const I18N = {
 
     // ── dynamic (functions)
     sliderTick: p => `drempel ${p.v}`,
+    step2Take: p => p.zeroPay
+      ? `Bij ${p.ink} betaal je <strong>niets</strong> — je inkomen ligt onder de drempel.`
+      : !p.dkWins
+      ? `Bij ${p.ink} betaal je het volledige wettelijke bedrag <strong>${p.pay}/mnd</strong> — je schuld wordt netjes afgelost.`
+      : p.growing
+      ? `Bij ${p.ink} betaal je <strong>${p.pay}/mnd</strong>, maar je schuld groeit nog <strong>${p.growth}/mnd</strong>. Beleg de <strong>${p.etfRoom}/mnd</strong> die je overhoudt in plaats van extra af te lossen.`
+      : `Bij ${p.ink} betaal je <strong>${p.pay}/mnd</strong> en je schuld krimpt met <strong>${p.growth}/mnd</strong>.`,
+    step3Take: p => p.hasForgiven
+      ? `Betaal je het minimum, dan groeit een ETF-belegging naar ~<strong>${p.etf}</strong>, terwijl na 35 jaar <strong>${p.forgiven}</strong> wordt kwijtgescholden.`
+      : `Je schuld wordt binnen 35 jaar volledig afgelost; minimaal betalen + beleggen levert ~<strong>${p.etf}</strong> op.`,
     tagZero: () => 'geen betalingsverplichting',
     tagDk: () => 'draagkrachtbedrag',
     tagWm: () => 'wettelijk maandbedrag',
@@ -1852,6 +1862,16 @@ const I18N = {
 
     // ── dynamic (functions)
     sliderTick: p => `threshold ${p.v}`,
+    step2Take: p => p.zeroPay
+      ? `At ${p.ink} you pay <strong>nothing</strong> — your income is below the threshold.`
+      : !p.dkWins
+      ? `At ${p.ink} you pay the full statutory amount <strong>${p.pay}/mo</strong> — your debt is paid off in full.`
+      : p.growing
+      ? `At ${p.ink} you pay <strong>${p.pay}/mo</strong>, but your debt still grows <strong>${p.growth}/mo</strong>. Invest the <strong>${p.etfRoom}/mo</strong> you keep instead of overpaying.`
+      : `At ${p.ink} you pay <strong>${p.pay}/mo</strong> and your debt shrinks by <strong>${p.growth}/mo</strong>.`,
+    step3Take: p => p.hasForgiven
+      ? `Pay the minimum and an ETF grows to ~<strong>${p.etf}</strong>, while <strong>${p.forgiven}</strong> is written off after 35 years.`
+      : `Your debt is fully repaid within 35 years; paying the minimum + investing yields ~<strong>${p.etf}</strong>.`,
     tagZero: () => 'no payment obligation',
     tagDk: () => 'capacity-based amount',
     tagWm: () => 'statutory monthly amount',
@@ -2308,7 +2328,7 @@ function updateCalc() {
   document.getElementById('statEtf').textContent = fmt(etfRoom);
 
   // ── Eindsaldo + repaid/forgiven donut — quick simulation for final debt
-  const { finalDebt, totalPaid } = simulate(ink, schuld, rente, jaren, drempel);
+  const { finalDebt, totalPaid, etfValue } = simulate(ink, schuld, rente, jaren, drempel);
   const eindEl  = document.getElementById('statEind');
   const eindSub = document.getElementById('statEindSub');
   document.getElementById('statEindLbl').textContent = t('eindLbl', { jaren });
@@ -2327,6 +2347,17 @@ function updateCalc() {
     eindEl.style.color  = 'var(--blue)';
     eindSub.textContent = t('eindKwit');
   }
+
+  // ── Dynamic journey takeaways (plain-language guidance)
+  const s2 = document.getElementById('step2Desc');
+  if (s2) s2.innerHTML = t('step2Take', {
+    ink: fmt(ink), pay: fmt(pay), growth: fmt(groei),
+    etfRoom: fmt(etfRoom), growing, dkWins, zeroPay
+  });
+  const s3 = document.getElementById('step3Desc');
+  if (s3) s3.innerHTML = t('step3Take', {
+    etf: fmt(etfValue), forgiven: fmt(finalDebt), hasForgiven: finalDebt >= 1
+  });
 
   // ── Draagkracht live breakdown
   const box  = document.getElementById('dkExplainer');
